@@ -1,38 +1,41 @@
-import 'dotenv/config';
-import cors from 'cors';
-import express from 'express';
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
 
-import { connectDb } from './models';
-import routes from './routes';
-import controllers from './controllers';
+const express = require("express"),
+  mongoose = require("mongoose"),
+  cors = require("cors"),
+  bodyParser = require("body-parser"),
+  people_routes = require("./routes/people.route")
+
+const uri = process.env.DATABASE_URI
+
+mongoose.Promise = global.Promise;
+mongoose
+  .connect(uri, {
+    useNewUrlParser: true,
+  })
+  .then(
+    () => {
+      console.log("Database conected");
+    },
+    (error) => {
+      console.log("cannot connect to database" + error);
+    }
+  );
 
 const app = express();
-// * Application-Level Middleware * //
-
-// Third-Party Middleware
+app.use(express.json());
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
 
 app.use(cors());
+app.use("/people", people_routes);
 
-// Built-In Middleware
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Custom Middleware
-
-app.use("newPeople", controllers.newPeople)
-
-connectDb().then(async () => {
-    if (eraseDatabaseOnSync) {
-      await Promise.all([
-        models.User.deleteMany({}),
-        models.Message.deleteMany({}),
-      ]);
-  
-      createUsersWithMessages();
-    }
-  
-    app.listen(process.env.PORT, () =>
-      console.log(`Example app listening on port ${process.env.PORT}!`),
-    );
-  });
+const port = process.env.PORT || 4000;
+const server = app.listen(port, () => {
+  console.log("Connected to port " + port);
+});

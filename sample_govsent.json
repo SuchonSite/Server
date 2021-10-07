@@ -1,0 +1,25 @@
+{
+    "date": "1-1-2021",
+    "people": [
+        {
+            "name": "suchon",
+            "surname": "boyyy",
+            "birthdate": "Datetime",
+            "citizenID": "11111111",
+            "occupation": "doctor",
+            "address": "1111/1111 abc road",
+            "register_timestamp": "Datetime",
+            "reservationID": "1000001"
+        },
+        {
+            "name": "suchon",
+            "surname": "boyyy",
+            "birthdate": "Datetime",
+            "citizenID": "11111111",
+            "occupation": "doctor",
+            "address": "1111/1111 abc road",
+            "register_timestamp": "Datetime",
+            "reservationID": "1000002"
+        }
+    ]
+}

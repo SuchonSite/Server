@@ -1,4 +1,5 @@
-const newPeople = () => {
+
+const newPeople = (req, res) => {
     console.log("NEW PEOPLE")
 }
 
