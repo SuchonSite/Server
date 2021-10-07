@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Custom Middleware
 
-// app.use("newPeople", controllers.)
+app.use("newPeople", controllers.newPeople)
 
 connectDb().then(async () => {
     if (eraseDatabaseOnSync) {
