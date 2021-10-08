@@ -26,11 +26,12 @@ router.post('/add_people', async (req, res) => {
                 peopleSchema.create(req.body, (error, data) => {
                     console.log("data added");
                 })
-                res.json(req.body)
+                res.json({"msg": "data added"})
             }
         }
         catch (e) {
             console.log("error while add people")
+            res.status(402).json({"msg": "add people not completed"})
         }
     }
     else {
