@@ -36,7 +36,7 @@ router.post('/add_people', async (req, res) => {
     }
     else {
         console.log("app key invalid")
-        res.status(401).json({"msg": "addpeopleappkey invalid"})
+        res.status(403).json({"msg": "addpeopleappkey invalid"})
     }
 })
 
