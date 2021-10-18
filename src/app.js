@@ -35,7 +35,9 @@ app.use(
 app.use(cors());
 app.use("/people", people_routes);
 
-const port = process.env.PORT || 4000;
-const server = app.listen(port, () => {
-  console.log("Connected to port " + port);
-});
+// const port = process.env.PORT || 4000;
+// const server = app.listen(port, () => {
+//   console.log("Connected to port " + port);
+// });
+
+module.exports = app;
