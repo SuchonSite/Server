@@ -15,9 +15,11 @@ router.post('/getDataFromGov/:date', async (req, res) => {
        return res.status(202).json({"msg": "no date included"})
     }
     const date = req.params.date;
+    const slashDate = helper.toSlashDate(date)
+    
     // fetch to gov
     let govEndpoint = process.env.GOV_ENDPOINT
-    let getDataFromGovUrl = govEndpoint + "reservation/" + date
+    let getDataFromGovUrl = govEndpoint + "reservation/" + slashDate
     let peopleList = []
     try{
         const response = await axios.get(getDataFromGovUrl)
@@ -34,11 +36,14 @@ router.post('/getDataFromGov/:date', async (req, res) => {
         console.log(e)
         return res.status(504).json({"msg": "fetch gov data failed"})
     }
-    // compare and modify result (arrange priority)
+    
+    // compare and modify result
     let newPeopleList = helper.modifyPeopleList(peopleList)
+    // arrange queue based on priority and timestamp
+    let peopleQueueList = helper.arrangeQueuePeopleList(newPeopleList)
     
     // store up into database and return result
-    let result = dbHelper.dbStorePeople(date, newPeopleList)
+    let result = dbHelper.dbStorePeople(date, peopleQueueList)
     if(result) {
         console.log("stored completed")
         return res.json({"msg": "data added"})
