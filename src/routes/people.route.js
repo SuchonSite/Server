@@ -82,23 +82,23 @@ router.post('/add_people', async (req, res) => {
     }
 })
 
-router.get('/get_people', async (req, res) => {
+router.get('/all', async (req, res) => {
     console.log(req.params)
     const allPeople = await peopleSchema.find()
     console.log(allPeople)
-    res.send(allPeople)
+    return res.send(allPeople)
 })
 
-router.get('/get_people_by_date/:date', async (req, res) => {
+router.get('/by_date/:date', async (req, res) => {
     console.log("get people by date")
     console.log(req.params)
     if(req.params.date == null){
         console.log("no date included")
-        res.status(202).json({"msg": "no date included"})
+        return res.status(202).json({"msg": "no date included"})
     }
     const people = await peopleSchema.findOne({ "date": req.params.date })
     console.log(people)
-    res.send(people)
+    return res.send(people)
 })
 
 module.exports = router
