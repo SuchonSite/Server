@@ -1,4 +1,4 @@
-# Suchon-Site (Vaccination provider site)
+# Vaccination provider by Suchon site
 
 Since COVID-19 pandemic is still going on, having a vaccine seems to be a good idea. unfortunately, in some situations when you go to the vaccination center with a bad queuing arrangement. You may have to encounter a great crowd of people. Which might increase the chance of getting infected. For that reason, our application aims to create a good queuing arrangement by making an appointment for each user, so that users can come on their time and avoid the crowded problem.
 
