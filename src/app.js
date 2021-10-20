@@ -6,7 +6,8 @@ const express = require("express"),
   mongoose = require("mongoose"),
   cors = require("cors"),
   bodyParser = require("body-parser"),
-  people_routes = require("./routes/people.route")
+  peopleRoutes = require("./routes/people.route")
+  getGov = require("./routes/getDataFromGov.route")
 
 const uri = process.env.DATABASE_URI
 
@@ -32,12 +33,22 @@ app.use(
   })
 );
 
-app.use(cors());
-app.use("/people", people_routes);
+app.use( (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With,accesstoken');
 
-// const port = process.env.PORT || 4000;
-// const server = app.listen(port, () => {
-//   console.log("Connected to port " + port);
-// });
+  // intercept OPTIONS method
+  if ('OPTIONS' == req.method) {
+    res.send(200);
+  }
+  else {
+    next();
+  }
+})
+
+app.use(cors());
+app.use("/",getGov)
+app.use("/people", peopleRoutes);
 
 module.exports = app;
