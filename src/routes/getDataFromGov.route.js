@@ -17,6 +17,12 @@ router.post('/getDataFromGov/:date', async (req, res) => {
     const date = req.params.date;
     const slashDate = helper.toSlashDate(date)
     
+    // check if db dont have this date
+    const people = await peopleSchema.findOne({ "date": date })
+    if (people != null) {
+        return res.status(401).json({"msg": "already have data in this date."})
+    }
+    
     // fetch to gov
     let govEndpoint = process.env.GOV_ENDPOINT
     let getDataFromGovUrl = govEndpoint + "reservation/" + slashDate
@@ -24,8 +30,8 @@ router.post('/getDataFromGov/:date', async (req, res) => {
     try{
         const response = await axios.get(getDataFromGovUrl)
         console.log("get data from gov successful")
-        if (response.status == 200 && response.body != []){
-            peopleList = response.body
+        if (response.status == 200 && response.data != []){
+            peopleList = response.data
         }
         else{ 
             console.log(response.status); 

@@ -29,16 +29,16 @@ function modifyPeopleList(jsonPeopleList) {
 
 function setPriorityPerson(person) {
     // for doctor, nurse
-    if(["doctor", "nurse"].includes(p.occupation)) {
-        return 1;
+    if(["doctor", "nurse"].includes(person.occupation)) {
+        return "1";
     }
     // for people age >= 60
-    else if (calcAge(p.birthdate) >= 60) {
-        return 2;
+    else if (calcAge(person.birth_date) >= 60) {
+        return "2";
     }
     // others
     else {
-        return 3;
+        return "3";
     }
 }
 
@@ -52,18 +52,23 @@ function setPriorityPerson(person) {
 function arrangeQueuePeopleList(peopleList) {
 
     let arrangedPeopleList = {
-        1: [],
-        2: [],
-        3: []
+        "1": [],
+        "2": [],
+        "3": []
     }
     
+    //ใส่เวลา
+    
     //set priority people in people list
-    for (person in personList) {
+    for (const person of peopleList) {
         let priority = setPriorityPerson(person);
         person.priority = priority;
         arrangedPeopleList[priority].push(person);
     }
-    return arrangedPeopleList
+    
+    let queueList = []
+    queueList = arrangedPeopleList["1"].concat(arrangedPeopleList["2"], arrangedPeopleList["3"])
+    return queueList;
 }
 
-module.exports = { calcAge, toSlashDate, modifyPeopleList, setPriorityPeopleList, arrangeQueuePeopleList };
+module.exports = { calcAge, toSlashDate, modifyPeopleList, arrangeQueuePeopleList };
