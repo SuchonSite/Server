@@ -6,7 +6,7 @@ This application is a part of Software Process & Project Management 01219346 cou
 
 ## Project Documents
 * [User Stories](https://docs.google.com/document/d/15mJUWDTodgeH3xAa-sm5pXQ5PwcVSdjU-OOOIoB69EA/edit)
-* [API](../../wiki/API%20Documentation)
+* [API Documentation](../../wiki/API%20Documentation)
 
 ## Iterations
 * [Iteration 1 Plan](https://github.com/SuchonSite/Server/wiki/Iteration-1-Plan)
