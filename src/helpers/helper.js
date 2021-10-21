@@ -49,26 +49,34 @@ function setPriorityPerson(person) {
 //Time Slot = ... slots
 //Vaccinations per timeslot = ... persons
 
-function arrangeQueuePeopleList(peopleList) {
 
-    let arrangedPeopleList = {
-        "1": [],
-        "2": [],
-        "3": []
-    }
-    
-    //ใส่เวลา
-    
-    //set priority people in people list
-    for (const person of peopleList) {
-        let priority = setPriorityPerson(person);
-        person.priority = priority;
-        arrangedPeopleList[priority].push(person);
-    }
-    
-    let queueList = []
-    queueList = arrangedPeopleList["1"].concat(arrangedPeopleList["2"], arrangedPeopleList["3"])
-    return queueList;
-}
+// ------------ uncomment เอานะ ----------------
 
-module.exports = { calcAge, toSlashDate, modifyPeopleList, arrangeQueuePeopleList, convertGovJson, setPriorityPerson };
+// function arrangeQueuePeopleList(peopleList) {
+
+//     let arrangedPeopleList = {
+//         "1": [],
+//         "2": [],
+//         "3": []
+//     }
+    
+//     //ใส่เวลา
+    
+//     //set priority people in people list
+//     for (const person of peopleList) {
+//         let priority = setPriorityPerson(person);
+//         person.priority = priority;
+//         arrangedPeopleList[priority].push(person);
+//     }
+    
+//     let queueList = []
+//     queueList = arrangedPeopleList["1"].concat(arrangedPeopleList["2"], arrangedPeopleList["3"])
+//     return queueList;
+// }
+
+
+// module.exports = { calcAge, toSlashDate, modifyPeopleList, arrangeQueuePeopleList, convertGovJson, setPriorityPerson };
+
+
+//------- ลบทิ้งเองนะ --------
+module.exports = { calcAge, toSlashDate, modifyPeopleList, convertGovJson, setPriorityPerson };
