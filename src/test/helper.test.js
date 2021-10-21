@@ -1,21 +1,19 @@
 /** 
  * Unit tests for helper.js
- *
+ * Require helper module
  */
-
-// require helper module
 const helper = require('../helpers/helper')
 
 /**
- * 
- * 
+ * Sample type of user undertest.
  */
 let normal_young_user;
 let invalid_user;
 let listOfUser;
 
 /**
- * 
+ * Set Up
+ * Initializes some user information
  */
 beforeEach(() => {
 
@@ -85,7 +83,7 @@ test("calulate user's age of user who was born on 31 Dec 2000", () => {
     expect(helper.calcAge("31-12-2000")).toBe(20);
 });
 
-test("calulate user's age based on passed year and today birthday", () => {
+test("calulate user's age of user who was born today on year 2000", () => {
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');
     var mm = String(today.getMonth() + 1).padStart(2, '0'); 
@@ -98,43 +96,51 @@ test("calulate user's age of user who was born on 1 Jan this year", () => {
     expect(helper.calcAge("1-1-2021")).toBe(0);
 });
 
-test("", () => {
+test("calulate user's age of user who was born in the future", () => {
     expect(() => helper.calcAge("31-12-2022")).toThrow('you are using invalid date');
 });
  
-test("", () => {
+test("calulate user's age with date 01 (have zero in front)", () => {
     expect(helper.calcAge("01-01-2000")).toBe(21);
 });
 
-test("", () => {
+test("calulate user's age of user who was born in 'July' ", () => {
     expect(() => helper.calcAge("1-July-2000")).toThrow('you are using wrong date format');
 });
 
-test("", () => {
+test("calulate user's age with empty string", () => {
     expect(() => helper.calcAge("")).toThrow('you are using wrong date format');
 });
 
-test("", () => {
+test("calulate user's age with format yyyy-mm-dd", () => {
     expect(() => helper.calcAge("2000-12-2")).toThrow('you are using wrong date format');
 });
 
-test("", () => {
+test("calulate user's age of user who was born on day 0", () => {
     expect(() => helper.calcAge("0-1-2000")).toThrow('you are using invalid date');
 });
 
-test("test นี้แก้ได้นะ", () => {
+test("calulate user's age of user who was born on day -1, test นี้แก้ได้นะ", () => {
     expect(() => helper.calcAge("-1-01-2000")).toThrow('you are using invalid date');
 });
 
-test("", () => {
+test("calulate user's age with no '-' format", () => {
     expect(() => helper.calcAge("01012000")).toThrow('you are using wrong date format');
 });
 
-test("", () => {
+test("calulate user's age with '/' format", () => {
     expect(() => helper.calcAge("1/1/2000")).toThrow('you are using wrong date format');
 });
 
-test("", () => {
+test("calulate user's age with invalid month", () => {
+    expect(() => helper.calcAge("1-13-2000")).toThrow('you are using invalid date');
+});
+
+test("calulate user's age with invalid date", () => {
+    expect(() => helper.calcAge("32-1-2000")).toThrow('you are using invalid date');
+});
+
+test("check JSON have correct key&value", () => {
     let normal_young_user_json = helper.convertGovJson(normal_young_user[0]);
     let expected = {reservation_id: 1};
     expected['register_timestamp'] = "2021-10-20T15:19:56.609000";
@@ -147,7 +153,7 @@ test("", () => {
     expect(normal_young_user_json).toEqual(expected);
 });
 
-test("", () => {
+test("check JSON have all require field(eventhough value is undefine)", () => {
     const invalid_user_json = helper.convertGovJson(invalid_user[0]);
     expect(invalid_user_json.reservation_id).toEqual(expect.any(Number))
     expect(invalid_user_json.register_timestamp).toEqual(expect.any(String))
@@ -159,62 +165,62 @@ test("", () => {
     expect(invalid_user_json.address).toEqual(expect.any(String))
 });
 
-test("", () => {
+test("check JSON has valid reservation_id format", () => {
     const normal_young_user_json = helper.convertGovJson(normal_young_user[0]);
     expect(normal_young_user_json.reservation_id).toBe(1);
 });
 
-test("", () => {
+test("check JSON has valid timestamp format", () => {
     const normal_young_user_json = helper.convertGovJson(normal_young_user[0]);
     expect(normal_young_user_json.register_timestamp).toEqual("2021-10-20T15:19:56.609000");
 });
 
-test("", () => {
+test("check JSON has valid name format", () => {
     const normal_young_user_json = helper.convertGovJson(normal_young_user[0]);
     expect(normal_young_user_json.name).toEqual("Joel");
 });
 
-test("", () => {
+test("check JSON has valid surname format", () => {
     const normal_young_user_json = helper.convertGovJson(normal_young_user[0]);
     expect(normal_young_user_json.surname).toEqual("Miller");
 });
 
-test("", () => {
+test("check JSON has valid date format", () => {
     const normal_young_user_json = helper.convertGovJson(normal_young_user[0]);
     expect(normal_young_user_json.birth_date).toEqual("20-10-2000");
 });
 
-test("", () => {
+test("check JSON has valid id format", () => {
     const normal_young_user_json = helper.convertGovJson(normal_young_user[0]);
     expect(normal_young_user_json.citizen_id).toEqual("1234567890123");
 });
 
-test("", () => {
+test("check JSON has valid occupation format", () => {
     const normal_young_user_json = helper.convertGovJson(normal_young_user[0]);
     expect(normal_young_user_json.occupation).toEqual("Teacher");
 });
 
-test("", () => {
+test("check JSON has valid address format", () => {
     const normal_young_user_json = helper.convertGovJson(normal_young_user[0]);
     expect(normal_young_user_json.address).toEqual("Kasetsart University");
 });
 
-test("", () => {
+test("check modify normal date format", () => {
     let date = "10-20-2000" 
     expect(helper.toSlashDate(date)).toEqual("2000/20/10");
 });
 
-test("", () => {
+test("check modify invalid date format", () => {
     let date = "01234-12233-200000000" 
     expect(helper.toSlashDate(date)).toEqual("200000000/12233/01234");
 });
 
-test("number of element", () => {
+test("check number of element in list", () => {
     let newList = helper.modifyPeopleList(listOfUser)
     expect(newList.length).toBe(2)
 });
 
-test("order", () => {
+test("check user order", () => {
     let newList = helper.modifyPeopleList(listOfUser)
     expect(newList[0].reservation_id).toEqual(1)
     expect(newList[1].reservation_id).toEqual(2)
