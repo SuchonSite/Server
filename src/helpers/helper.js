@@ -71,4 +71,4 @@ function arrangeQueuePeopleList(peopleList) {
     return queueList;
 }
 
-module.exports = { calcAge, toSlashDate, modifyPeopleList, arrangeQueuePeopleList };
+module.exports = { calcAge, toSlashDate, modifyPeopleList, arrangeQueuePeopleList, convertGovJson, setPriorityPerson };
