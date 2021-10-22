@@ -1,4 +1,5 @@
 function calcAge(dateString) {
+    // YYYY-MM-DD
     const dateParts = dateString.split('-')
     const birthday = +new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]);
     return ~~((Date.now() - birthday) / (31557600000));
@@ -32,7 +33,7 @@ function setPriorityPerson(person) {
     if(["doctor", "nurse"].includes(person.occupation.toLowerCase())) {
         return "1";
     }
-    // for people age > 60
+    // for people age > 60 (from gov YYYY/MM/DD)
     else if (calcAge(person.birth_date) > 60) {
         return "2";
     }

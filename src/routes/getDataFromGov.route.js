@@ -14,8 +14,8 @@ router.post('/getDataFromGov/:date', async (req, res) => {
        console.log("no date included")
        return res.status(202).json({"msg": "no date included"})
     }
-    const date = req.params.date;
-    const slashDate = helper.toSlashDate(date)
+    const date = req.params.date; // DD-MM-YYYY
+    const slashDate = helper.toSlashDate(date) // to YYYY/MM/DD
     
     // check if db dont have this date
     const people = await peopleSchema.findOne({ "date": date })
@@ -23,9 +23,9 @@ router.post('/getDataFromGov/:date', async (req, res) => {
         return res.status(401).json({"msg": "already have data in this date."})
     }
     
-    // fetch to gov
+    // fetch from gov
     let govEndpoint = process.env.GOV_ENDPOINT
-    let getDataFromGovUrl = govEndpoint + "reservation/" + slashDate
+    let getDataFromGovUrl = govEndpoint + "reservation/" + slashDate // reservation/YYYY/MM/DD
     let peopleList = []
     try{
         const response = await axios.get(getDataFromGovUrl)
