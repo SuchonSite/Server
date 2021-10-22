@@ -1,8 +1,28 @@
+/**
+ * Calculate a person age using birthdate
+ * 
+ * @param {string} dateString : birthdate in string format "YYYY-MM-DD"
+ * @returns {int} age : age calculated using birthdate (dateString) and current date
+ */
 function calcAge(dateString) {
-    // YYYY-MM-DD
-    const dateParts = dateString.split('-')
-    const birthday = +new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]);
-    return ~~((Date.now() - birthday) / (31557600000));
+    //check regex format of input dateString
+    const dateRegex = /^[0-9]{4}\-[0-9]{1,2}\-[0-9]{1,2}$/;
+    if (!dateRegex.test(dateString)) throw new Error("you are using invalid date format");
+
+    const [year, month, day] = dateString.split('-')
+
+    //check year, month and day boundary
+    if (year<1 || month<1 || month>12 || day<1 || day>31) throw new Error("you are using wrong date");
+    if (month === 2 && day>29) throw new Error("you are using invalid date");
+
+    const birthday = +new Date(+year, month - 1, +day);
+    const timeCompared = (Date.now() - birthday);
+
+    //check if birthdate is not later than current date
+    if (timeCompared < 0 ) throw new Error("you are using invalid date");
+    
+    //return converted time (second) to year
+    return  ~~(timeCompared / (31557600000));
 }
 
 function convertGovJson(thisJson) {
@@ -14,9 +34,24 @@ function convertGovJson(thisJson) {
     return newJson
 }
 
+/**
+ * Date string formatter from YYYY-MM-DD -> YYYY/MM/DD
+ * 
+ * Since our POST request to add data to our database is '/getDataFromGov/YYYY-MM-DD'
+ * But we GET request to fetch data from GOV by '/reservation/YYYY/MM/DD'
+ * 
+ * So we have to change format from YYYY-MM-DD -> YYYY/MM/DD
+ * 
+ * @param {string} date
+ * @returns {string} formated date string
+ */
 function toSlashDate(date) {
-    let [day, month, year] = date.split("-")
-    return [year, month, day].join("/")
+    //check regex format of input date
+    const dateRegex = /^[0-9]{4}\-[0-9]{1,2}\-[0-9]{1,2}$/;
+    if (!dateRegex.test(date)) throw new Error("you are using invalid date");
+
+    let [day, month, year] = date.split("-") //YYYY-MM-DD
+    return [year, month, day].join("/") //YYYY/MM/DD
 }
 
 function modifyPeopleList(jsonPeopleList) {
@@ -33,7 +68,7 @@ function setPriorityPerson(person) {
     if(["doctor", "nurse"].includes(person.occupation.toLowerCase())) {
         return "1";
     }
-    // for people age > 60 (from gov YYYY/MM/DD)
+    // for people age > 60
     else if (calcAge(person.birth_date) > 60) {
         return "2";
     }
