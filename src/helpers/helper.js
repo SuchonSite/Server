@@ -32,8 +32,8 @@ function setPriorityPerson(person) {
     if(["doctor", "nurse"].includes(person.occupation)) {
         return "1";
     }
-    // for people age >= 60
-    else if (calcAge(person.birth_date) >= 60) {
+    // for people age > 60
+    else if (calcAge(person.birth_date) > 60) {
         return "2";
     }
     // others
@@ -52,31 +52,31 @@ function setPriorityPerson(person) {
 
 // ------------ uncomment เอานะ ----------------
 
-// function arrangeQueuePeopleList(peopleList) {
+function arrangeQueuePeopleList(peopleList) {
 
-//     let arrangedPeopleList = {
-//         "1": [],
-//         "2": [],
-//         "3": []
-//     }
+    let arrangedPeopleList = {
+        "1": [],
+        "2": [],
+        "3": []
+    }
     
-//     //ใส่เวลา
+    //ใส่เวลา
     
-//     //set priority people in people list
-//     for (const person of peopleList) {
-//         let priority = setPriorityPerson(person);
-//         person.priority = priority;
-//         arrangedPeopleList[priority].push(person);
-//     }
+    //set priority people in people list
+    for (const person of peopleList) {
+        let priority = setPriorityPerson(person);
+        person.priority = priority;
+        arrangedPeopleList[priority].push(person);
+    }
     
-//     let queueList = []
-//     queueList = arrangedPeopleList["1"].concat(arrangedPeopleList["2"], arrangedPeopleList["3"])
-//     return queueList;
-// }
+    let queueList = []
+    queueList = arrangedPeopleList["1"].concat(arrangedPeopleList["2"], arrangedPeopleList["3"])
+    return queueList;
+}
 
 
-// module.exports = { calcAge, toSlashDate, modifyPeopleList, arrangeQueuePeopleList, convertGovJson, setPriorityPerson };
+module.exports = { calcAge, toSlashDate, modifyPeopleList, arrangeQueuePeopleList, convertGovJson, setPriorityPerson };
 
 
 //------- ลบทิ้งเองนะ --------
-module.exports = { calcAge, toSlashDate, modifyPeopleList, convertGovJson, setPriorityPerson };
+// module.exports = { calcAge, toSlashDate, modifyPeopleList, convertGovJson, setPriorityPerson };
