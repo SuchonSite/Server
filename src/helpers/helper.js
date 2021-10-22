@@ -56,11 +56,11 @@ function toSlashDate(date) {
 
 function modifyPeopleList(jsonPeopleList) {
     let newPeopleList = []
-    for (const person of jsonPeopleList) {
+ for (const person of jsonPeopleList) {
         let thisPerson = convertGovJson(person)
         newPeopleList.push(thisPerson)
     }
-    return newPeopleList
+    return newPeopleList   
 }
 
 function setPriorityPerson(person) {
@@ -82,12 +82,6 @@ function setPriorityPerson(person) {
 // - Users who have high priority will get a vaccine first. (FINISHED)
 // - On the other hand, users who have the same priority will be assigned a queue based on timestamp. (FINISHED from Gov)
 
-//Time Slot = ... slots
-//Vaccinations per timeslot = ... persons
-
-
-// ------------ uncomment เอานะ ----------------
-
 function arrangeQueuePeopleList(peopleList) {
 
     let arrangedPeopleList = {
@@ -95,8 +89,6 @@ function arrangeQueuePeopleList(peopleList) {
         "2": [],
         "3": []
     }
-    
-    //ใส่เวลา
     
     //set priority people in people list
     for (const person of peopleList) {
@@ -110,9 +102,45 @@ function arrangeQueuePeopleList(peopleList) {
     return queueList;
 }
 
+/**
+ * Since what we recieved from GOV is assigned people vaccination date.
+ * So we have to assign them to each timeslot in each day.
+ * 
+ * @param peopleList : List of people to be put in timeslot 
+ * @param {int} peoplePerTimeslot : how many people that can take vaccination per timeslot
+ * @returns assignedTimePeopleList : List of people that assign vaccination time in each day.
+ */
+ function assignPeopleListInTimeslots(peopleList, peoplePerTimeslot) {
+    const GOVERNMENT_OPEN = 9; //open at 9 am (official time)
+    const GOVERNMENT_CLOSE = 17; //close at 5 pm (official time)
+    const VACCINATION_TIME = 1; //vaccination time is 1 hr
+    
+    //start vaccination when government open
+    let vac_time = GOVERNMENT_OPEN;
 
-module.exports = { calcAge, toSlashDate, modifyPeopleList, arrangeQueuePeopleList, convertGovJson, setPriorityPerson };
+    let assignedTimePeopleList = [];
+    
+    let avaliableCurrentSlot = peoplePerTimeslot;
+    for (const person of peopleList) {
 
+        if (avaliableCurrentSlot == 0) {
+            //re availible vacciantgion slot of current timeslot
+            avaliableCurrentSlot = peoplePerTimeslot;
 
-//------- ลบทิ้งเองนะ --------
-// module.exports = { calcAge, toSlashDate, modifyPeopleList, convertGovJson, setPriorityPerson };
+            if (vac_time == GOVERNMENT_CLOSE) {
+                throw new Error('Not enough timeslot for all vaccination')
+            }
+            else {
+                vac_time += VACCINATION_TIME;
+            }
+        }
+        newPerson = {...person, vac_time : vac_time}
+        avaliableCurrentSlot--;
+
+        assignedTimePeopleList.push(newPerson);
+    }
+
+    return assignedTimePeopleList;
+}
+
+module.exports = { calcAge, toSlashDate, modifyPeopleList, arrangeQueuePeopleList, convertGovJson, setPriorityPerson ,assignPeopleListInTimeslots};
