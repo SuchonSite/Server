@@ -451,7 +451,7 @@ test("set priority for young Doctor(Doctor with 'D')", () => {
     normal_young_user['surname'] = "Miller";
     normal_young_user['birth_date'] = "20-10-2000";
     normal_young_user['citizen_id'] = "1234567890123";
-    normal_young_user['occupation'] = "Docter";
+    normal_young_user['occupation'] = "Doctor";
     normal_young_user['address'] = "Kasetsart University";
     expect(helper.setPriorityPerson(normal_young_user)).toEqual("1");
 });

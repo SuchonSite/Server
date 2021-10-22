@@ -29,7 +29,7 @@ function modifyPeopleList(jsonPeopleList) {
 
 function setPriorityPerson(person) {
     // for doctor, nurse
-    if(["doctor", "nurse"].includes(person.occupation)) {
+    if(["doctor", "nurse"].includes(person.occupation.toLowerCase())) {
         return "1";
     }
     // for people age > 60
