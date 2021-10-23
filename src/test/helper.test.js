@@ -8,7 +8,6 @@ const helper = require('../helpers/helper')
  * Sample type of user undertest.
  */
 let normal_young_user;
-let invalid_user;
 let listOfUser;
 
 /**
@@ -22,19 +21,6 @@ beforeEach(() => {
             "reservation_id": 1,
             "register_timestamp": "2021-10-20T15:19:56.609000",
             "owner": {
-                "name": "Joel",
-                "surname": "Miller",
-                "birth_date": "2000-10-20",
-                "citizen_id": "1234567890123",
-                "occupation": "Teacher",
-                "address": "Kasetsart University"
-            }
-        }
-    ]
-
-    invalid_user = [
-        {
-            "data": {
                 "name": "Joel",
                 "surname": "Miller",
                 "birth_date": "2000-10-20",
@@ -81,7 +67,7 @@ beforeEach(() => {
  * Function calcAge must return 21 years old
  */
 test("calulate user's age of user who was born on 10 Oct 2000", () => {
-    expect(helper.calcAge("10-10-2000")).toBe(21);
+    expect(helper.calcAge("2000-10-10")).toBe(21);
 });
   
 /**
@@ -90,7 +76,7 @@ test("calulate user's age of user who was born on 10 Oct 2000", () => {
  * Function calcAge must return 20 years old
  */
 test("calulate user's age of user who was born on 31 Dec 2000", () => {
-    expect(helper.calcAge("31-12-2000")).toBe(20);
+    expect(helper.calcAge("2000-12-31")).toBe(20);
 });
 
 /**
@@ -103,7 +89,7 @@ test("calulate user's age of user who was born today on year 2000", () => {
     var dd = String(today.getDate()).padStart(2, '0');
     var mm = String(today.getMonth() + 1).padStart(2, '0'); 
     var yyyy = "2000";
-    today = dd + '-' + mm + '-' + yyyy;
+    today = yyyy + '-' + mm + '-' + dd;
     expect(helper.calcAge(today)).toBe(21);
 });
 
@@ -113,7 +99,7 @@ test("calulate user's age of user who was born today on year 2000", () => {
  * Function calcAge must return 0 years old
  */
 test("calulate user's age of user who was born on 1 Jan this year", () => {
-    expect(helper.calcAge("1-1-2021")).toBe(0);
+    expect(helper.calcAge("2021-1-1")).toBe(0);
 });
 
 /**
@@ -131,7 +117,7 @@ test("calulate user's age of user who was born in the future", () => {
  * Function calcAge must return 21'
  */
 test("calulate user's age with date 01 (have zero in front)", () => {
-    expect(helper.calcAge("01-01-2000")).toBe(21);
+    expect(helper.calcAge("2000-01-01")).toBe(21);
 });
 
 /**
@@ -140,7 +126,7 @@ test("calulate user's age with date 01 (have zero in front)", () => {
  * Function calcAge must throw error with massage 'you are using wrong date format'
  */
 test("calulate user's age of user who was born in 'July' ", () => {
-    expect(() => helper.calcAge("1-July-2000")).toThrow('you are using wrong date format');
+    expect(() => helper.calcAge("2000-July-1")).toThrow('you are using invalid date format');
 });
 
 /**
@@ -149,16 +135,16 @@ test("calulate user's age of user who was born in 'July' ", () => {
  * Function calcAge must throw error with massage 'you are using wrong date format'
  */
 test("calulate user's age with empty string", () => {
-    expect(() => helper.calcAge("")).toThrow('you are using wrong date format');
+    expect(() => helper.calcAge("")).toThrow('you are using invalid date format');
 });
 
 /**
  * Test Case ID: 9
- * Given a date with yyyy-mm-dd
+ * Given a date with dd-mm-yyyy
  * Function calcAge must throw error with massage 'you are using wrong date format'
  */
 test("calulate user's age with format yyyy-mm-dd", () => {
-    expect(() => helper.calcAge("2000-12-2")).toThrow('you are using wrong date format');
+    expect(() => helper.calcAge("2-12-2000")).toThrow('you are using invalid date format');
 });
 
 /**
@@ -185,7 +171,7 @@ test("calulate user's age of user who was born on day -1, test นี้แก�
  * Function calcAge must throw error with massage 'you are using wrong date format'
  */
 test("calulate user's age with no '-' format", () => {
-    expect(() => helper.calcAge("01012000")).toThrow('you are using wrong date format');
+    expect(() => helper.calcAge("01012000")).toThrow('you are using invalid date format');
 });
 
 /**
@@ -194,7 +180,7 @@ test("calulate user's age with no '-' format", () => {
  * Function calcAge must throw error with massage 'you are using wrong date format'
  */
 test("calulate user's age with '/' format", () => {
-    expect(() => helper.calcAge("1/1/2000")).toThrow('you are using wrong date format');
+    expect(() => helper.calcAge("1/1/2000")).toThrow('you are using invalid date format');
 });
 
 /**
@@ -226,28 +212,11 @@ test("check JSON have correct key&value", () => {
     expected['register_timestamp'] = "2021-10-20T15:19:56.609000";
     expected['name'] = "Joel";
     expected['surname'] = "Miller";
-    expected['birth_date'] = "20-10-2000";
+    expected['birth_date'] = "2000-10-20";
     expected['citizen_id'] = "1234567890123";
     expected['occupation'] = "Teacher";
     expected['address'] = "Kasetsart University";
     expect(normal_young_user_json).toEqual(expected);
-});
-
-/**
- * Test Case ID: 17
- * Given an invalid data (in case GOV team accidentally send incorrect format)
- * Function convertGovJson must still generate JSON object that contain all important key
- */
-test("check JSON have all require field(eventhough value is undefine)", () => {
-    const invalid_user_json = helper.convertGovJson(invalid_user[0]);
-    expect(invalid_user_json.reservation_id).toEqual(expect.any(Number))
-    expect(invalid_user_json.register_timestamp).toEqual(expect.any(String))
-    expect(invalid_user_json.name).toEqual(expect.any(String))
-    expect(invalid_user_json.surname).toEqual(expect.any(String))
-    expect(invalid_user_json.birth_date).toEqual(expect.any(String))
-    expect(invalid_user_json.citizen_id).toEqual(expect.any(String))
-    expect(invalid_user_json.occupation).toEqual(expect.any(String))
-    expect(invalid_user_json.address).toEqual(expect.any(String))
 });
 
 /**
@@ -297,7 +266,7 @@ test("check JSON has valid surname format", () => {
  */
 test("check JSON has valid date format", () => {
     const normal_young_user_json = helper.convertGovJson(normal_young_user[0]);
-    expect(normal_young_user_json.birth_date).toEqual("20-10-2000");
+    expect(normal_young_user_json.birth_date).toEqual("2000-10-20");
 });
 
 /**
@@ -332,22 +301,12 @@ test("check JSON has valid address format", () => {
 
 /**
  * Test Case ID: 26
- * Given date with format "10-20-2000" 
- * Function toSlashDate must return "2000/20/10"
+ * Given date with format "2000-20-10" 
+ * Function toSlashDate must return "10/20/2000"
  */
 test("check modify normal date format", () => {
-    let date = "10-20-2000" 
-    expect(helper.toSlashDate(date)).toEqual("2000/20/10");
-});
-
-/**
- * Test Case ID: 27
- * Given date with format "01234-12233-200000000" 
- * Function toSlashDate must return "200000000/12233/01234"
- */
-test("check modify invalid date format", () => {
-    let date = "01234-12233-200000000" 
-    expect(helper.toSlashDate(date)).toEqual("200000000/12233/01234");
+    let date = "2000-20-10" 
+    expect(helper.toSlashDate(date)).toEqual("10/20/2000");
 });
 
 /**
@@ -381,7 +340,7 @@ test("set priority for normal young user", () => {
     normal_young_user['register_timestamp'] = "2021-10-20T15:19:56.609000";
     normal_young_user['name'] = "Joel";
     normal_young_user['surname'] = "Miller";
-    normal_young_user['birth_date'] = "20-10-2000";
+    normal_young_user['birth_date'] = "2000-10-20";
     normal_young_user['citizen_id'] = "1234567890123";
     normal_young_user['occupation'] = "Teacher";
     normal_young_user['address'] = "Kasetsart University";
@@ -398,7 +357,7 @@ test("set priority for normal old user", () => {
     normal_young_user['register_timestamp'] = "2021-10-20T15:19:56.609000";
     normal_young_user['name'] = "Joel";
     normal_young_user['surname'] = "Miller";
-    normal_young_user['birth_date'] = "20-10-1950";
+    normal_young_user['birth_date'] = "1950-10-20";
     normal_young_user['citizen_id'] = "1234567890123";
     normal_young_user['occupation'] = "Teacher";
     normal_young_user['address'] = "Kasetsart University";
@@ -415,7 +374,7 @@ test("set priority for young Nurse (Nurse with caps 'N')", () => {
     normal_young_user['register_timestamp'] = "2021-10-20T15:19:56.609000";
     normal_young_user['name'] = "Joel";
     normal_young_user['surname'] = "Miller";
-    normal_young_user['birth_date'] = "20-10-2000";
+    normal_young_user['birth_date'] = "2000-10-20";
     normal_young_user['citizen_id'] = "1234567890123";
     normal_young_user['occupation'] = "Nurse"; 
     normal_young_user['address'] = "Kasetsart University";
@@ -432,7 +391,7 @@ test("set priority for young nurse", () => {
     normal_young_user['register_timestamp'] = "2021-10-20T15:19:56.609000";
     normal_young_user['name'] = "Joel";
     normal_young_user['surname'] = "Miller";
-    normal_young_user['birth_date'] = "20-10-2000";
+    normal_young_user['birth_date'] = "2000-10-20";
     normal_young_user['citizen_id'] = "1234567890123";
     normal_young_user['occupation'] = "nurse";
     normal_young_user['address'] = "Kasetsart University";
@@ -449,7 +408,7 @@ test("set priority for young Doctor(Doctor with 'D')", () => {
     normal_young_user['register_timestamp'] = "2021-10-20T15:19:56.609000";
     normal_young_user['name'] = "Joel";
     normal_young_user['surname'] = "Miller";
-    normal_young_user['birth_date'] = "20-10-2000";
+    normal_young_user['birth_date'] = "2000-10-20";
     normal_young_user['citizen_id'] = "1234567890123";
     normal_young_user['occupation'] = "Doctor";
     normal_young_user['address'] = "Kasetsart University";
@@ -466,7 +425,7 @@ test("set priority for young doctor", () => {
     normal_young_user['register_timestamp'] = "2021-10-20T15:19:56.609000";
     normal_young_user['name'] = "Joel";
     normal_young_user['surname'] = "Miller";
-    normal_young_user['birth_date'] = "20-10-2000";
+    normal_young_user['birth_date'] = "2000-10-20";
     normal_young_user['citizen_id'] = "1234567890123";
     normal_young_user['occupation'] = "doctor";
     normal_young_user['address'] = "Kasetsart University";
@@ -483,7 +442,7 @@ test("set priority for old doctor", () => {
     normal_young_user['register_timestamp'] = "2021-10-20T15:19:56.609000";
     normal_young_user['name'] = "Joel";
     normal_young_user['surname'] = "Miller";
-    normal_young_user['birth_date'] = "20-10-1950";
+    normal_young_user['birth_date'] = "1950-10-20";
     normal_young_user['citizen_id'] = "1234567890123";
     normal_young_user['occupation'] = "doctor";
     normal_young_user['address'] = "Kasetsart University";
@@ -500,7 +459,7 @@ test("set priority for young nurse", () => {
     normal_young_user['register_timestamp'] = "2021-10-20T15:19:56.609000";
     normal_young_user['name'] = "Joel";
     normal_young_user['surname'] = "Miller";
-    normal_young_user['birth_date'] = "20-10-1950";
+    normal_young_user['birth_date'] = "1950-10-20";
     normal_young_user['citizen_id'] = "1234567890123";
     normal_young_user['occupation'] = "nurse";
     normal_young_user['address'] = "Kasetsart University";
@@ -517,7 +476,7 @@ test("set priority for exact 60 user", () => {
     normal_young_user['register_timestamp'] = "2021-10-20T15:19:56.609000";
     normal_young_user['name'] = "Joel";
     normal_young_user['surname'] = "Miller";
-    normal_young_user['birth_date'] = "1-1-1961";
+    normal_young_user['birth_date'] = "1961-1-1";
     normal_young_user['citizen_id'] = "1234567890123";
     normal_young_user['occupation'] = "Actor";
     normal_young_user['address'] = "Kasetsart University";
@@ -534,7 +493,7 @@ test("set priority for exact 61 user", () => {
     normal_young_user['register_timestamp'] = "2021-10-20T15:19:56.609000";
     normal_young_user['name'] = "Joel";
     normal_young_user['surname'] = "Miller";
-    normal_young_user['birth_date'] = "1-1-1960";
+    normal_young_user['birth_date'] = "1960-1-1";
     normal_young_user['citizen_id'] = "1234567890123";
     normal_young_user['occupation'] = "Actor";
     normal_young_user['address'] = "Kasetsart University";
@@ -551,7 +510,7 @@ test("set priority for exact 59 user", () => {
     normal_young_user['register_timestamp'] = "2021-10-20T15:19:56.609000";
     normal_young_user['name'] = "Joel";
     normal_young_user['surname'] = "Miller";
-    normal_young_user['birth_date'] = "1-1-1962";
+    normal_young_user['birth_date'] = "1962-1-1";
     normal_young_user['citizen_id'] = "1234567890123";
     normal_young_user['occupation'] = "Actor";
     normal_young_user['address'] = "Kasetsart University";
