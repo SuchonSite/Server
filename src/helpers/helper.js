@@ -47,7 +47,7 @@ function convertGovJson(thisJson) {
  */
 function toSlashDate(date) {
     //check regex format of input date
-    const dateRegex = /^[0-9]{4}\-[0-9]{1,2}\-[0-9]{1,2}$/;
+    const dateRegex = /^[0-9]{1,2}\-[0-9]{1,2}\-[0-9]{4}$/;
     if (!dateRegex.test(date)) throw new Error("you are using invalid date");
 
     let [day, month, year] = date.split("-") //YYYY-MM-DD

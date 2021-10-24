@@ -305,8 +305,8 @@ test("check JSON has valid address format", () => {
  * Function toSlashDate must return "10/20/2000"
  */
 test("check modify normal date format", () => {
-    let date = "2000-20-10" 
-    expect(helper.toSlashDate(date)).toEqual("10/20/2000");
+    let date = "20-10-2000" 
+    expect(helper.toSlashDate(date)).toEqual("2000/10/20");
 });
 
 /**
