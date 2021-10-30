@@ -24,4 +24,18 @@ router.get('/by_date/:date', async (req, res) => {
     return res.send(people)
 })
 
+router.delete('/by_date/:date', async (req, res) => {
+    console.log("delete people by date")
+    console.log(req.params)
+    const date = req.params.date
+    if(req.params.date == null){
+        console.log("no date included")
+        return res.status(202).json({"msg": "no date included"})
+    }
+      
+    peopleSchema.findOneAndDelete({ "date": date }, function (err, docs) {
+        return res.json({})
+    });
+})
+
 module.exports = router
