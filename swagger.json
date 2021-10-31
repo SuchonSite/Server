@@ -1,0 +1,39 @@
+{
+    "basePath": "/",
+    "consumes": [
+      "application/json"
+    ],
+    "definitions": {},
+    "info": {
+      "license": {
+        "name": "ISC"
+      },
+      "title": "SuchonSite Api docs",
+      "version": "0.1.0"
+    },
+    "paths": {
+      "/people/all": {
+        "get": {
+          "operationId": "HelloHello",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Ok",
+              "schema": {
+                "type": "string"
+              }
+            }
+          },
+          "description": ""
+        }
+      }
+    },
+    "produces": [
+      "application/json"
+    ],
+    "swagger": "2.0",
+    "securityDefinitions": {},
+    "host": "suchonsite-server.herokuapp.com"
+}
