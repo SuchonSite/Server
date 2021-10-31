@@ -1,0 +1,20 @@
+openapi: 3.0.0
+info:
+  title: Sample API
+  description: Optional multiline or single-line description in HTML.
+  version: 0.1.1
+servers:
+  - url: https://api.opendota.com/api
+    description: test from https://docs.opendota.com/
+paths:
+  /people/all:
+    get:
+      summary: All people in database.
+      description: People in database.
+      responses:
+        '200':    # status code
+          description: List of all people by date
+          content:
+            application/json:
+              schema: 
+                type: json
