@@ -9,6 +9,8 @@ const helper = require('../helpers/helper')
 const peoplePerTimeslot = 10;
 
 router.post('/getDataFromGov/:date', async (req, res) => {
+
+    await fetGovHelper(req, res);
     // param date
     console.log("get data from gov (by date)")
     if (req.params.date == null) {
@@ -23,7 +25,7 @@ router.post('/getDataFromGov/:date', async (req, res) => {
     if (people != null) {
         return res.status(401).json({"msg": "already have data in this date."})
     }
-    
+
     // fetch from gov
     let govEndpoint = process.env.GOV_ENDPOINT
     let getDataFromGovUrl = govEndpoint + "reservation/" + slashDate // reservation/YYYY/MM/DD
