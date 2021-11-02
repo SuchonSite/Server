@@ -38,7 +38,7 @@ function makeApp(database){
 
   app.use(cors());
   app.use("/",getGov)
-  app.use("/people", peopleRoutes);
+  app.use("/people", peopleRoutes(database));
 
   return app
 }
