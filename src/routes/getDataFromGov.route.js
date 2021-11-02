@@ -7,7 +7,6 @@ const peopleSchema = require('../models/People')
 const dbHelper = require('../db/dbHelper')
 const helper = require('../helpers/helper')
 const fetcher = require('../helpers/fetchHelper')
-const peoplePerTimeslot = 10;
 
 router.post('/getDataFromGov/:date', async (req, res) => {
 
@@ -44,7 +43,7 @@ router.post('/getDataFromGov/:date', async (req, res) => {
     // arrange queue based on priority and timestamp
     let peopleQueueList = helper.arrangeQueuePeopleList(newPeopleList)
     // assign vaccination time
-    let peopleAssignedTimeList = helper.assignPeopleListInTimeslots(peopleQueueList, peoplePerTimeslot)
+    let peopleAssignedTimeList = helper.assignPeopleListInTimeslots(peopleQueueList)
     
     // store up into database and return result
     let result = dbHelper.dbStorePeople(date, peopleAssignedTimeList)

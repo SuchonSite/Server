@@ -110,13 +110,11 @@ function arrangeQueuePeopleList(peopleList) {
  * @param {int} peoplePerTimeslot : how many people that can take vaccination per timeslot
  * @returns assignedTimePeopleList : List of people that assign vaccination time in each day.
  */
- function assignPeopleListInTimeslots(peopleList, peoplePerTimeslot) {
-    const GOVERNMENT_OPEN = 9; //open at 9 am (official time)
-    const GOVERNMENT_CLOSE = 17; //close at 5 pm (official time)
-    const VACCINATION_TIME = 1; //vaccination time is 1 hr
+ function assignPeopleListInTimeslots(peopleList) {
+    const peoplePerTimeslot = process.env.PEOPLE_PER_TIMESLOT
     
     //start vaccination when government open
-    let vac_time = GOVERNMENT_OPEN;
+    let vac_time = process.env.GOVERNMENT_OPEN;
 
     let assignedTimePeopleList = [];
     
@@ -127,11 +125,11 @@ function arrangeQueuePeopleList(peopleList) {
             //re availible vacciantgion slot of current timeslot
             avaliableCurrentSlot = peoplePerTimeslot;
 
-            if (vac_time == GOVERNMENT_CLOSE) {
+            if (vac_time == process.env.GOVERNMENT_CLOSE) {
                 throw new Error('Not enough timeslot for all vaccination')
             }
             else {
-                vac_time += VACCINATION_TIME;
+                vac_time += process.env.VACCINATION_TIME;
             }
         }
         newPerson = {...person, vac_time : vac_time}
@@ -143,4 +141,21 @@ function arrangeQueuePeopleList(peopleList) {
     return assignedTimePeopleList;
 }
 
-module.exports = { calcAge, toSlashDate, modifyPeopleList, arrangeQueuePeopleList, convertGovJson, setPriorityPerson ,assignPeopleListInTimeslots};
+function countPeople(peopleData){
+    if(peopleData == null) {
+        return {"count": 0, "waiting": 0, "vaccined": 0}
+    }
+    let count = 0, waiting = 0, vaccinated = 0;
+    for(const person of peopleData.people){
+        count +=1 ;
+        if( person.vaccinated == true ){
+            vaccinated += 1;
+        }
+        else{
+            waiting += 1;
+        }
+    }
+    return {"count": count, "waiting": waiting, "vaccinated": vaccinated}
+}
+
+module.exports = { calcAge, toSlashDate, modifyPeopleList, arrangeQueuePeopleList, convertGovJson, setPriorityPerson ,assignPeopleListInTimeslots, countPeople };
