@@ -6,11 +6,11 @@ const mongoose = require('mongoose'),
 const peopleSchema = require('../models/People')
 const dbHelper = require('../db/dbHelper')
 const helper = require('../helpers/helper')
+const fetcher = require('../helpers/fetchHelper')
 const peoplePerTimeslot = 10;
 
 router.post('/getDataFromGov/:date', async (req, res) => {
 
-    await fetGovHelper(req, res);
     // param date
     console.log("get data from gov (by date)")
     if (req.params.date == null) {
@@ -30,21 +30,14 @@ router.post('/getDataFromGov/:date', async (req, res) => {
     let govEndpoint = process.env.GOV_ENDPOINT
     let getDataFromGovUrl = govEndpoint + "reservation/" + slashDate // reservation/YYYY/MM/DD
     let peopleList = []
-    try{
-        const response = await axios.get(getDataFromGovUrl)
-        console.log("get data from gov successful")
-        if (response.status == 200 && response.data != []){
-            peopleList = response.data
-        }
-        else{ 
-            console.log(response.status); 
-            return res.status(504).json({"msg": "gov status code != 200"})
-        }
-    } catch (e) {
-        console.log("getData failed")
-        console.log(e)
-        return res.status(504).json({"msg": "fetch gov data failed"})
-    }
+    // fetch using fetch method from helpers
+    let dataFromGov = fetcher.fetchDataToList(getDataFromGovUrl)
+    dataFromGov.then((data) => {
+        peopleList = data;
+    }).catch((e)=> {
+        if (e.message == "gov status code != 200") res.status(504).json({"msg": "gov status code != 200"});
+        else return res.status(504).json({"msg": "fetch gov data failed"});
+    })
     
     // compare and modify result
     let newPeopleList = helper.modifyPeopleList(peopleList)
