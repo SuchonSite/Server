@@ -9,21 +9,25 @@ const express = require("express"),
   peopleRoutes = require("./routes/people.route")
   getGov = require("./routes/getDataFromGov.route")
 
+const {connectDB} = require("./database");
+
 const uri = process.env.DATABASE_URI
 
-mongoose.Promise = global.Promise;
-mongoose
-  .connect(uri, {
-    useNewUrlParser: true,
-  })
-  .then(
-    () => {
-      console.log("Database conected");
-    },
-    (error) => {
-      console.log("cannot connect to database" + error);
-    }
-  );
+connectDB(uri);
+
+// mongoose.Promise = global.Promise;
+// mongoose
+//   .connect(uri, {
+//     useNewUrlParser: true,
+//   })
+//   .then(
+//     () => {
+//       console.log("Database conected");
+//     },
+//     (error) => {
+//       console.log("cannot connect to database" + error);
+//     }
+//   );
 
 const app = express();
 app.use(express.json());
