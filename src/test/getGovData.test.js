@@ -63,7 +63,7 @@ describe("POST /getDataFromGov", () => {
         const promise = new Promise((resolve, reject) => {
             setTimeout(() => {
                 resolve(rawPeopleInfo.data);
-            }, 5000);
+                }, 5000);
         });
 
         fetchDataToList.mockReturnValueOnce(promise)

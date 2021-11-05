@@ -81,6 +81,20 @@ describe("GET /people", () => {
     })
 })
 
+describe("DELETE /people", () => {
+
+    test("get people info on specific date", async () => {
+        const data = byDatePeopleInfo.data
+        deletePeopleInfo.mockReturnValueOnce()
+        const response = await request.get('/people/by_date/20-10-2021')
+    })
+
+    test("no date given", async () => {
+        const response = await request.delete('/people/by_date')
+        expect(response.status).toBe(406)
+    })
+})
+
 describe("GET /count", () => {
 
     test("count people in day", async () => {
