@@ -2,10 +2,11 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 
-const database = require("./database")
+const database = require("./helpers/database")
+const fetcher = require("./helpers/fetcher")
 
 const makeApp = require("./app");
-const app = makeApp(database);
+const app = makeApp(database, fetcher);
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('../swagger.json');
