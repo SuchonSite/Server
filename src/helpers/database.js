@@ -1,6 +1,6 @@
 mongoose = require("mongoose")
 
-const peopleSchema = require('./models/People')
+const peopleSchema = require('../models/People')
 
 mongoose.Promise = global.Promise;
 
