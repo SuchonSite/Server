@@ -43,4 +43,21 @@ async function updatePeopleInfo(date, newPeople) {
     return peopleSchema.findOneAndUpdate(date, newPeople);
 } 
 
-module.exports = {connectDB, getAllPeopleInfo, getPeopleInfoByDate, deletePeopleInfo, updatePeopleInfo}
+async function dbStorePeople(date, peopleList){
+    let storeData = {
+        "date": date,
+        "people": peopleList
+    }
+    try {
+        peopleSchema.create(storeData, (error, da) => {
+            console.log("date added")
+        })
+        return true
+    }
+    catch (e) {
+        console.log("error while add people")
+        return false
+    }
+}
+
+module.exports = {connectDB, getAllPeopleInfo, getPeopleInfoByDate, deletePeopleInfo, dbStorePeople, updatePeopleInfo}

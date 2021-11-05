@@ -3,7 +3,6 @@ function getDataFromGov(database, fetcher) {
     const express = require('express'),
         router = express.Router();
 
-    const dbHelper = require('../db/dbHelper')
     const helper = require('../helpers/helper')
 
     router.post('/getDataFromGov/:date', async (req, res) => {
@@ -40,7 +39,7 @@ function getDataFromGov(database, fetcher) {
         let peopleAssignedTimeList = helper.assignPeopleListInTimeslots(peopleQueueList)
         
         // store up into database and return result
-        let result = dbHelper.dbStorePeople(date, peopleAssignedTimeList)
+        let result = database.dbStorePeople(date, peopleAssignedTimeList)
         if(result) {
             console.log("stored completed")
             return res.json({"msg": "data added"})
