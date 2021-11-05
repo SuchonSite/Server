@@ -6,11 +6,15 @@ const makeApp = require("../app");
 const allPeopleInfo = require('./allPeopleInfo.json');
 const byDatePeopleInfo = require('./peopleInfo.json');
 
-const fetcher = jest.fn()
+const fetchDataToList = jest.fn()
 const connectDB = jest.fn();
 const getAllPeopleInfo = jest.fn();
 const getPeopleInfoByDate = jest.fn();
 const deletePeopleInfo = jest.fn();
+
+const fetcher = {
+    fetchDataToList
+}
 
 const database = {
     connectDB,
@@ -23,7 +27,7 @@ const app = makeApp(database);
 const request = supertest(app);
 
 beforeEach(() => {
-    fetcher.mockReset()
+    fetchDataToList.mockReset()
     connectDB.mockReset()
     getAllPeopleInfo.mockReset()
     getPeopleInfoByDate.mockReset()

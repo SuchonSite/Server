@@ -6,11 +6,15 @@ const makeApp = require("../app");
 const rawPeopleInfo = require("./rawPeopleInfo.json")
 const byDatePeopleInfo = require('./peopleInfo.json');
 
-const fetcher = jest.fn()
+const fetchDataToList = jest.fn()
 const connectDB = jest.fn();
 const getAllPeopleInfo = jest.fn();
 const getPeopleInfoByDate = jest.fn();
 const deletePeopleInfo = jest.fn();
+
+const fetcher = {
+    fetchDataToList
+}
 
 const database = {
     connectDB,
@@ -23,7 +27,8 @@ const app = makeApp(database, fetcher);
 const request = supertest(app);
 
 beforeEach(() => {
-    fetcher.mockReset()
+    jest.setTimeout(60000);
+    fetchDataToList.mockReset()
     connectDB.mockReset()
     getAllPeopleInfo.mockReset()
     getPeopleInfoByDate.mockReset()
@@ -32,11 +37,19 @@ beforeEach(() => {
 
 describe("POST /getDataFromGov", () => {
 
-    test("get all people info", async () => {
+    test("get data from gov", async () => {
         const data = rawPeopleInfo.data
-        fetcher.mockReturnValueOnce(data)
-        // getPeopleInfoByDate.mockReturnValueOnce(byDatePeopleInfo.data)
+        fetchDataToList.mockReturnValueOnce(data)
+        getPeopleInfoByDate.mockReturnValueOnce(null)
         const response = await request.post('/getDataFromGov/20-10-2021')
-        expect(response.status).toBe(200)
+        expect(response.status).toBe(401)
+    })
+
+    test("already have data", async () => {
+        const data = rawPeopleInfo.data
+        fetchDataToList.mockReturnValueOnce(data)
+        getPeopleInfoByDate.mockReturnValueOnce(byDatePeopleInfo.data)
+        const response = await request.post('/getDataFromGov/20-10-2021')
+        expect(response.status).toBe(401)
     })
 })
