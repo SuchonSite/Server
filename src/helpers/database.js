@@ -33,6 +33,16 @@ async function deletePeopleInfo(date) {
     })
 }
 
+/**
+ * 
+ * @param {json} date // filter
+ * @param {json} newPeople // json of List of people
+ */
+async function updatePeopleInfo(date, newPeople) {
+    // console.log(newPeople)
+    return peopleSchema.findOneAndUpdate(date, newPeople);
+} 
+
 async function dbStorePeople(date, peopleList){
     let storeData = {
         "date": date,
@@ -50,4 +60,4 @@ async function dbStorePeople(date, peopleList){
     }
 }
 
-module.exports = {connectDB, getAllPeopleInfo, getPeopleInfoByDate, deletePeopleInfo, dbStorePeople}
+module.exports = {connectDB, getAllPeopleInfo, getPeopleInfoByDate, deletePeopleInfo, dbStorePeople, updatePeopleInfo}
