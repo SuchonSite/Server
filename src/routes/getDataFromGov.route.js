@@ -9,10 +9,6 @@ function getDataFromGov(database, fetcher) {
 
         // param date
         console.log("get data from gov (by date)")
-        if (req.params.date == null) {
-        console.log("no date included")
-        return res.status(202).json({"msg": "no date included"})
-        }
         const date = req.params.date; // DD-MM-YYYY
         const slashDate = helper.toSlashDate(date) // to YYYY/MM/DD
         
