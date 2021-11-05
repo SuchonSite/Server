@@ -58,6 +58,27 @@ function peopleRoutes(database) {
         let walkin = process.env.MAX_PEOPLE_PER_DATE - totalPeople;
         return res.json({"total_walkin": walkin});
     })
+    
+    router.patch('/cancle',async (_, res) => {
+        return res.status(406).json({"msg": "no date or reservationID included"})
+    })
+    router.patch('/cancel/:date/:reservationID', async (req, res) => {
+        console.log("cancle people by date and reservationID");
+        const { date, reservationID } = req.params;
+        const peopleData = await database.getPeopleInfoByDate({ "date": date });
+        
+        try {
+            const newPeopleDataList = helper.removePeople(peopleData.people, parseInt(reservationID));
+            await database.updatePeopleInfo({ date: date }, { people: newPeopleDataList});
+        }
+        catch (e) {
+            if (e.message != null) {
+                return res.status(400).json({"msg": e.message});
+            }
+            return res.status(304).json({"msg": `remove ${reserved_id} from ${date} unsuccessful`});
+        }
+        return res.json({"msg": `removed reservationID ${reservationID} from ${date}`});
+    })
 
     return router;
 }

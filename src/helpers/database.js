@@ -33,4 +33,14 @@ async function deletePeopleInfo(date) {
     })
 }
 
-module.exports = {connectDB, getAllPeopleInfo, getPeopleInfoByDate, deletePeopleInfo}
+/**
+ * 
+ * @param {json} date // filter
+ * @param {json} newPeople // json of List of people
+ */
+async function updatePeopleInfo(date, newPeople) {
+    // console.log(newPeople)
+    return peopleSchema.findOneAndUpdate(date, newPeople);
+} 
+
+module.exports = {connectDB, getAllPeopleInfo, getPeopleInfoByDate, deletePeopleInfo, updatePeopleInfo}
