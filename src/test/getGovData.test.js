@@ -11,6 +11,7 @@ const connectDB = jest.fn();
 const getAllPeopleInfo = jest.fn();
 const getPeopleInfoByDate = jest.fn();
 const deletePeopleInfo = jest.fn();
+const dbStorePeople = jest.fn();
 
 const fetcher = {
     fetchDataToList
@@ -21,13 +22,14 @@ const database = {
     getAllPeopleInfo,
     getPeopleInfoByDate,
     deletePeopleInfo,
+    dbStorePeople
 }
 
 const app = makeApp(database, fetcher);
 const request = supertest(app);
 
 beforeEach(() => {
-    jest.setTimeout(60000);
+    jest.useFakeTimers()
     fetchDataToList.mockReset()
     connectDB.mockReset()
     getAllPeopleInfo.mockReset()
@@ -35,14 +37,20 @@ beforeEach(() => {
     deletePeopleInfo.mockReset()
 });
 
+afterAll(() => {
+    jest.setTimeout(5000)
+    fetchDataToList.mockRestore()
+});
+
 describe("POST /getDataFromGov", () => {
 
     test("get data from gov", async () => {
+        jest.setTimeout(30000)
         const data = rawPeopleInfo.data
         fetchDataToList.mockReturnValueOnce(data)
         getPeopleInfoByDate.mockReturnValueOnce(null)
         const response = await request.post('/getDataFromGov/20-10-2021')
-        expect(response.status).toBe(401)
+        expect(response.status).toBe(200)
     })
 
     test("already have data", async () => {
@@ -51,5 +59,13 @@ describe("POST /getDataFromGov", () => {
         getPeopleInfoByDate.mockReturnValueOnce(byDatePeopleInfo.data)
         const response = await request.post('/getDataFromGov/20-10-2021')
         expect(response.status).toBe(401)
+    })
+
+    test("no date", async () => {
+        const data = rawPeopleInfo.data
+        fetchDataToList.mockReturnValueOnce(data)
+        getPeopleInfoByDate.mockReturnValueOnce(null)
+        const response = await request.post('/getDataFromGov/')
+        expect(response.status).toBe(202)
     })
 })
