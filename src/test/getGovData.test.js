@@ -42,16 +42,37 @@ afterAll(() => {
 
 describe("POST /getDataFromGov", () => {
 
-    test("get data from gov", async () => {
-        const data = rawPeopleInfo.data
+    test("post data from gov", async () => {
+        // mock fetcher
+        const promise = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve(rawPeopleInfo.data);
+            }, 5000);
+        });
 
-        fetchDataToList.mockReturnValueOnce(data)
+        fetchDataToList.mockReturnValueOnce(promise)
         getPeopleInfoByDate.mockReturnValueOnce(null)
         dbStorePeople.mockReturnValueOnce(true)
 
         const response = await request.post('/getDataFromGov/20-10-2021')
         expect(response.status).toBe(200)
-    }, 10000)
+    })
+
+    test("failed to add data", async () => {
+        // mock fetcher
+        const promise = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve(rawPeopleInfo.data);
+            }, 5000);
+        });
+
+        fetchDataToList.mockReturnValueOnce(promise)
+        getPeopleInfoByDate.mockReturnValueOnce(null)
+        dbStorePeople.mockReturnValueOnce(false)
+
+        const response = await request.post('/getDataFromGov/20-10-2021')
+        expect(response.status).toBe(402)
+    })
 
     test("already have data", async () => {
         const data = rawPeopleInfo.data
