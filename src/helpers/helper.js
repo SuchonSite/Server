@@ -172,6 +172,24 @@ function removePeople(peopleList, reserved_id) {
   else throw new Error("person not found");
 }
 
+function vaccinePeople(peopleList, reserved_id) {
+  if (peopleList == null) {
+    throw new Error("peopleList is empty");
+  }
+  let updated = false;
+  for (const person of peopleList) {
+    if (person.reservation_id == reserved_id) {
+      if (person.vaccinated == false) {
+        person.vaccinated = true;
+        updated = true;
+      }
+      else throw new Error('this person already take vaccine!');
+    }
+  }
+  if (updated) return peopleList;
+  else throw new Error("person not found");
+}
+
 module.exports = {
   calcAge,
   toSlashDate,
@@ -182,4 +200,5 @@ module.exports = {
   assignPeopleListInTimeslots,
   countPeople,
   removePeople,
+  vaccinePeople,
 };

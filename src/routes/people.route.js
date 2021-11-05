@@ -59,7 +59,7 @@ function peopleRoutes(database) {
         return res.json({"total_walkin": walkin});
     })
     
-    router.patch('/cancle',async (_, res) => {
+    router.patch('/cancel',async (_, res) => {
         return res.status(406).json({"msg": "no date or reservationID included"})
     })
     router.patch('/cancel/:date/:reservationID', async (req, res) => {
@@ -75,9 +75,29 @@ function peopleRoutes(database) {
             if (e.message != null) {
                 return res.status(400).json({"msg": e.message});
             }
-            return res.status(304).json({"msg": `remove ${reserved_id} from ${date} unsuccessful`});
+            return res.status(304).json({"msg": `remove ${reservationID} on ${date} unsuccessful`});
         }
-        return res.json({"msg": `removed reservationID ${reservationID} from ${date}`});
+        return res.json({"msg": `removed reservationID ${reservationID} on ${date}`});
+    })
+
+    router.patch('/vaccinated',async (_, res) => {
+        return res.status(406).json({"msg": "no date or reservationID included"})
+    })
+    router.patch('/vaccinated/:date/:reservationID', async (req, res)=> {
+        const {date, reservationID} = req.params;
+        const peopleData = await database.getPeopleInfoByDate({ "date": date });
+        
+        try {
+            const newPeopleDataList = helper.vaccinePeople(peopleData.people, parseInt(reservationID));
+            await database.updatePeopleInfo({ date: date }, { people: newPeopleDataList});
+        }
+        catch (e) {
+            if (e.message != null) {
+                return res.status(400).json({"msg": e.message});
+            }
+            return res.status(304).json({"msg": `vaccine ${reservationID} on ${date} unsuccessful`});
+        }
+        return res.json({"msg": `vaccianted reservationID ${reservationID} on ${date}`});
     })
 
     return router;
