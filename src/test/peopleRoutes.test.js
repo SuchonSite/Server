@@ -83,10 +83,10 @@ describe("GET /people", () => {
 
 describe("DELETE /people", () => {
 
-    test("get people info on specific date", async () => {
-        const data = byDatePeopleInfo.data
+    test("delete people info on specific date", async () => {
         deletePeopleInfo.mockReturnValueOnce()
-        const response = await request.get('/people/by_date/20-10-2021')
+        const response = await request.delete('/people/by_date/20-10-2021')
+        expect(response.status).toBe(200)
     })
 
     test("no date given", async () => {
