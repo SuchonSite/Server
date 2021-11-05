@@ -1,8 +1,10 @@
+const getDataFromGov = require("./routes/getDataFromGov.route");
+
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 
-function makeApp(database){
+function makeApp(database, fetcher){
 
   const express = require("express"),
   cors = require("cors"),
@@ -37,7 +39,7 @@ function makeApp(database){
   })
 
   app.use(cors());
-  app.use("/",getGov)
+  app.use("/",getDataFromGov(database, fetcher))
   app.use("/people", peopleRoutes(database));
 
   return app
