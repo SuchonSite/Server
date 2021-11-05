@@ -29,7 +29,6 @@ const app = makeApp(database, fetcher);
 const request = supertest(app);
 
 beforeEach(() => {
-    jest.useFakeTimers()
     fetchDataToList.mockReset()
     connectDB.mockReset()
     getAllPeopleInfo.mockReset()
@@ -38,20 +37,21 @@ beforeEach(() => {
 });
 
 afterAll(() => {
-    jest.setTimeout(5000)
     fetchDataToList.mockRestore()
 });
 
 describe("POST /getDataFromGov", () => {
 
     test("get data from gov", async () => {
-        jest.setTimeout(30000)
         const data = rawPeopleInfo.data
+
         fetchDataToList.mockReturnValueOnce(data)
         getPeopleInfoByDate.mockReturnValueOnce(null)
+        dbStorePeople.mockReturnValueOnce(true)
+
         const response = await request.post('/getDataFromGov/20-10-2021')
         expect(response.status).toBe(200)
-    })
+    }, 10000)
 
     test("already have data", async () => {
         const data = rawPeopleInfo.data
