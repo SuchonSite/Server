@@ -32,7 +32,7 @@ function peopleRoutes(database) {
         console.log(req.params)
         const date = req.params.date
         
-        deletePeopleInfo({ "date": date });
+        database.deletePeopleInfo({ "date": date });
         return res.status(200)
     })
 
