@@ -11,6 +11,7 @@ const connectDB = jest.fn();
 const getAllPeopleInfo = jest.fn();
 const getPeopleInfoByDate = jest.fn();
 const deletePeopleInfo = jest.fn();
+const updatePeopleInfo = jest.fn();
 
 const fetcher = {
     fetchDataToList
@@ -21,9 +22,10 @@ const database = {
     getAllPeopleInfo,
     getPeopleInfoByDate,
     deletePeopleInfo,
+    updatePeopleInfo
 }
 
-const app = makeApp(database);
+const app = makeApp(database, fetcher);
 const request = supertest(app);
 
 beforeEach(() => {
@@ -32,6 +34,7 @@ beforeEach(() => {
     getAllPeopleInfo.mockReset()
     getPeopleInfoByDate.mockReset()
     deletePeopleInfo.mockReset()
+    updatePeopleInfo.mockReset()
 });
 
 describe("GET /people", () => {
@@ -124,6 +127,32 @@ describe("GET /count", () => {
 
     test("no date given", async () => {
         const response = await request.get('/people/count/walkin')
+        expect(response.status).toBe(406)
+    })
+})
+
+describe("PATCH /cancle", () => {
+
+    // test("cancle reservation", async () => {
+    //     const data = byDatePeopleInfo.data
+    //     getPeopleInfoByDate.mockReturnValueOnce(data)
+    //     const response = await request.get('/people/cancle/20-10-2021/10')
+    //     expect(response.status).toBe(200)
+
+    //     expect(response.body.count).toEqual(expect.any(Number))
+    //     expect(response.body.waiting).toEqual(expect.any(Number))
+    //     expect(response.body.vaccinated).toEqual(expect.any(Number))
+    // })
+
+    test("no date given", async () => {
+        updatePeopleInfo.mockReturnValueOnce()
+        const response = await request.patch('/people/cancle/')
+        expect(response.status).toBe(406)
+    })
+
+    test("no reservationID given", async () => {
+        updatePeopleInfo.mockReturnValueOnce()
+        const response = await request.patch('/people/cancle/20-10-2021/')
         expect(response.status).toBe(406)
     })
 })
