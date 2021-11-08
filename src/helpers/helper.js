@@ -165,10 +165,10 @@ function removePeople(peopleList, reserved_id) {
   if (peopleList == null) {
     throw new Error("peopleList is empty");
   }
-  const newPeopleList = peopleList.filter(person => 
-    person.reservation_id !== reserved_id
+  const newPeopleList = peopleList.filter(
+    (person) => person.reservation_id !== reserved_id
   );
-  if (peopleList.length > newPeopleList.length) return newPeopleList
+  if (peopleList.length > newPeopleList.length) return newPeopleList;
   else throw new Error("person not found");
 }
 
@@ -182,12 +182,58 @@ function vaccinePeople(peopleList, reserved_id) {
       if (person.vaccinated == false) {
         person.vaccinated = true;
         updated = true;
-      }
-      else throw new Error('this person already take vaccine!');
+      } else throw new Error("this person already take vaccine!");
     }
   }
   if (updated) return peopleList;
   else throw new Error("person not found");
+}
+
+function availableTimeslot(date) {
+  return 0;
+}
+
+function addPeopleToList(peopleList, newPerson) {
+  const { name, surname, birth_date, citizen_id, address } = newPerson;
+  if (peopleList == null) {
+    throw new Error("peopleList is empty");
+  }
+  const person = people.find((person) => person.citizen_id === citizen_id);
+  if (person) throw new Error("this person already have vaccination!");
+  else {
+    var m = new Date();
+    var dateString =
+      m.getUTCFullYear() +
+      "-" +
+      ("0" + (m.getUTCMonth() + 1)).slice(-2) +
+      "-" +
+      ("0" + m.getUTCDate()).slice(-2) +
+      "T" +
+      ("0" + m.getUTCHours()).slice(-2) +
+      ":" +
+      ("0" + m.getUTCMinutes()).slice(-2) +
+      ":" +
+      ("0" + m.getUTCSeconds()).slice(-2) +
+      "." +
+      ("0" + m.getUTCMilliseconds()).slice(-6);
+
+    //find available vactime
+    var vactime = availableTimeslot(date);
+
+    peopleList.push({
+      reservation_id: 0,
+      register_timestamp: dateString,
+      name: name,
+      surname: surname,
+      birth_date: birth_date,
+      citizen_id: citizen_id,
+      occupation: "",
+      address: address,
+      priority: 3,
+      vaccinated: false,
+      vac_time: vactime,
+    });
+  }
 }
 
 module.exports = {
@@ -201,4 +247,5 @@ module.exports = {
   countPeople,
   removePeople,
   vaccinePeople,
+  addPeopleToList,
 };
