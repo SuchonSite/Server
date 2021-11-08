@@ -38,7 +38,7 @@ function makeApp(database, fetcher){
     }
   })
 
-  app.use(cors());
+  // app.use(cors());
   app.use("/",getDataFromGov(database, fetcher))
   app.use("/people", peopleRoutes(database));
 
