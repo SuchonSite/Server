@@ -3,17 +3,12 @@ function getDataFromGov(database, fetcher) {
     const express = require('express'),
         router = express.Router();
 
-    const dbHelper = require('../db/dbHelper')
     const helper = require('../helpers/helper')
 
     router.post('/getDataFromGov/:date', async (req, res) => {
 
         // param date
         console.log("get data from gov (by date)")
-        if (req.params.date == null) {
-        console.log("no date included")
-        return res.status(202).json({"msg": "no date included"})
-        }
         const date = req.params.date; // DD-MM-YYYY
         const slashDate = helper.toSlashDate(date) // to YYYY/MM/DD
         
@@ -44,7 +39,7 @@ function getDataFromGov(database, fetcher) {
         let peopleAssignedTimeList = helper.assignPeopleListInTimeslots(peopleQueueList)
         
         // store up into database and return result
-        let result = dbHelper.dbStorePeople(date, peopleAssignedTimeList)
+        let result = database.dbStorePeople(date, peopleAssignedTimeList)
         if(result) {
             console.log("stored completed")
             return res.json({"msg": "data added"})
