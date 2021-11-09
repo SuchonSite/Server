@@ -1,3 +1,5 @@
+const database = require("./database");
+
 /**
  * Calculate a person age using birthdate
  *
@@ -149,7 +151,8 @@ function countPeople(peopleData) {
   }
   let count = 0,
     waiting = 0,
-    vaccinated = 0;
+    vaccinated = 0,
+    queue = {};
   for (const person of peopleData.people) {
     count += 1;
     if (person.vaccinated == true) {
@@ -157,8 +160,15 @@ function countPeople(peopleData) {
     } else {
       waiting += 1;
     }
+    queue[person.vac_time.toString()] =
+      (queue[person.vac_time.toString()] || 0) + 1;
   }
-  return { count: count, waiting: waiting, vaccinated: vaccinated };
+  return {
+    count: count,
+    waiting: waiting,
+    vaccinated: vaccinated,
+    queue: queue,
+  };
 }
 
 function removePeople(peopleList, reserved_id) {
@@ -189,16 +199,12 @@ function vaccinePeople(peopleList, reserved_id) {
   else throw new Error("person not found");
 }
 
-function availableTimeslot(date) {
-  return 0;
-}
-
-function addPeopleToList(peopleList, newPerson) {
-  const { name, surname, birth_date, citizen_id, address } = newPerson;
+function addPeopleToList(peopleList, newPersonData, queue) {
+  const { name, surname, birth_date, citizen_id, address } = newPersonData;
   if (peopleList == null) {
     throw new Error("peopleList is empty");
   }
-  const person = people.find((person) => person.citizen_id === citizen_id);
+  const person = peopleList.find((person) => person.citizen_id == citizen_id);
   if (person) throw new Error("this person already have vaccination!");
   else {
     var m = new Date();
@@ -218,9 +224,16 @@ function addPeopleToList(peopleList, newPerson) {
       ("0" + m.getUTCMilliseconds()).slice(-6);
 
     //find available vactime
-    var vactime = availableTimeslot(date);
+    let vactime = "";
+    // console.log(queue)
+    for (let timeslot in queue) {
+      if (queue[timeslot] > 0) {
+        vactime = timeslot;
+        break;
+      }
+    }
 
-    peopleList.push({
+    let np = {
       reservation_id: 0,
       register_timestamp: dateString,
       name: name,
@@ -229,11 +242,38 @@ function addPeopleToList(peopleList, newPerson) {
       citizen_id: citizen_id,
       occupation: "",
       address: address,
-      priority: 3,
+      priority: "3",
       vaccinated: false,
-      vac_time: vactime,
-    });
+      vac_time: parseInt(vactime),
+    };
+    peopleList.push(np);
+    console.log(peopleList);
   }
+  return peopleList;
+}
+
+function findAvailableTimeSlot(peopleList) {
+  let queue = {},
+    newqueue = {},
+    isAvailable = false;
+  // Initial time slot dict
+  for (let slot=parseInt(process.env.GOVERNMENT_OPEN); slot<=parseInt(process.env.GOVERNMENT_CLOSE); slot++) {
+    queue[slot.toString()] = 0;
+  }
+  // Set for each time slot
+  for (let person of peopleList){
+    queue[person.vac_time.toString()] += 1;
+  }
+  
+  // Available queue
+  for (let timeSlot in queue) {
+    let availableSlot = process.env.PEOPLE_PER_TIMESLOT - queue[timeSlot];
+    if (availableSlot) {
+      isAvailable = true;
+      newqueue[timeSlot] = availableSlot;
+    }
+  }
+  return [newqueue, isAvailable];
 }
 
 module.exports = {
@@ -248,4 +288,5 @@ module.exports = {
   removePeople,
   vaccinePeople,
   addPeopleToList,
+  findAvailableTimeSlot,
 };

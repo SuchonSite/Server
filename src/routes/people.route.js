@@ -130,47 +130,43 @@ function peopleRoutes(database) {
 		});
 	});
 
-	router.post("/add/:date", async (req, res) => {
+	router.patch("/add/:date", async (req, res) => {
 		// get values from frontend
-		const data = req.body;
-        
-        const newPerson = {
-            reservation_id: 0,
-            register_timestamp: dateString,
-            name: name,
-            surname: surname,
-            birth_date: birth_date,
-            citizen_id: citizen_id,
-            occupation: "",
-            address: address,
-            priority: 3,
-            vaccinated: false,
-            vac_time: vactime,
-          }
-
-		const peopleData = await database.getPeopleInfoByDate({
-			date: req.params.date,
-		});
+		const data = req.body,
+			date = req.params.date,
+			peopleData = await database.getPeopleInfoByDate({date: date});
 		// 1. find if the date already exists in db of that date
-		if (people != null) {
-			// add new person into database find and update
-			const newPeopleDataList = helper.addPeopleToList(
-				peopleData.people,
-				newPerson
-			);
-			await database.updatePeopleInfo(
-				{ date: date },
-				{ people: newPeopleDataList }
-			);
-			// find empty time slot
-			// if there is an empty time slot
-			// add this person to that time slot
-			// if not
-			// return res.status(304).json({"msg": `new vaccination reserve on ${date} unsuccessful`});
-		}
-		// 2. if not : create new date with a new peoplelist that contain that person
-		else {
-			database.dbStorePeople(date, []);
+		try {
+			if (peopleData != null) {
+				// find available time slot
+				let [queue, isAvailable] = helper.findAvailableTimeSlot(peopleData.people);
+				// console.log(queue, isAvailable)
+				if (isAvailable) {
+					//add this new person to peopleList
+					let newPeopleList = helper.addPeopleToList(peopleData.people, data, queue);
+					await database.updatePeopleInfo(
+						{ date: date },
+						{ people: newPeopleList }
+					);
+					return res.status(200).json({msg: `Vaccination on ${date} successful!`});
+				}
+				else {
+					return res.status(304).json({msg: `No available timeslot on ${date}`});
+				}
+			}
+			// 2. if not
+			else {
+				return res.status(400).json({msg: `Vaccination on ${date} is unavailable`});
+			}
+		} catch (e) {
+			if (e.message != null) {
+				return res.status(400).json({ msg: e.message });
+			}
+			return res
+				.status(304)
+				.json({
+					msg: `vaccine ${reservationID} on ${date} unsuccessful`,
+				});
 		}
 	});
 
