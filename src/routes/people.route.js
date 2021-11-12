@@ -1,13 +1,17 @@
 function peopleRoutes(database) {
 	const express = require("express"),
-		router = express.Router();
+		router = express.Router(),
+		helper = require("../helpers/helper");
 
-	const helper = require("../helpers/helper");
-
-	router.get("/all", async (req, res) => {
-		console.log(req.params);
+	/**
+		GET people/all
+		used: get all people schema (by date).
+		status code: 
+			- 200 OK
+	*/
+	router.get("/all", async (_, res) => {
 		const allPeople = await database.getAllPeopleInfo();
-		console.log(allPeople);
+		// console.log(allPeople);
 		return res.send(allPeople);
 	});
 
