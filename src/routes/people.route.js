@@ -78,14 +78,23 @@ function peopleRoutes(database) {
 		return res.json(result);
 	});
 
-	router.get("/count/walkin", async (_, res) => {
-		return res.status(406).json({ msg: "no date included" });
-	});
-	router.get("/count/walkin/:date", async (req, res) => {
+	/**
+		GET people/count/walkin/:date
+		used: get only walk in available number in queue by date.
+		status code:
+			- 200 OK
+			- 406 no date param included in request.
+	*/
+	router.get(["/count/walkin", "/count/walkin/:date"], async (req, res) => {
 		console.log("count walkin people by date");
 		console.log(req.params);
+		const { date } = req.params;
+		if (!date) {
+			return res.status(406).json({ msg: "no date param included" });
+		}
+		
 		const peopleData = await database.getPeopleInfoByDate({
-			date: req.params.date,
+			date: date,
 		});
 		const totalPeople = helper.countPeople(peopleData)["count"];
 		let walkin = process.env.MAX_PEOPLE_PER_DATE - totalPeople;
