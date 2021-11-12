@@ -31,7 +31,7 @@ function peopleRoutes(database) {
 		}
 		
 		const people = await database.getPeopleInfoByDate({
-			date: data
+			date: date
 		});
 		// console.log(people);
 		return res.send(people);
