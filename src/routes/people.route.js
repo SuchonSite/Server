@@ -138,11 +138,11 @@ function peopleRoutes(database) {
 			return res
 				.status(304)
 				.json({
-					msg: `remove ${reservationID} on ${date} unsuccessful`,
+					msg: `Remove ${reservationID} on ${date} unsuccessful`,
 				});
 		}
 		return res.json({
-			msg: `removed reservationID ${reservationID} on ${date}`,
+			msg: `Removed reservationID ${reservationID} on ${date} successful`,
 		});
 	});
 
@@ -184,11 +184,11 @@ function peopleRoutes(database) {
 			return res
 				.status(304)
 				.json({
-					msg: `vaccine ${reservationID} on ${date} unsuccessful`,
+					msg: `Vaccination reservationID : ${reservationID} on ${date} unsuccessful`,
 				});
 		}
 		return res.json({
-			msg: `vaccianted reservationID ${reservationID} on ${date}`,
+			msg: `Vaccination reservationID : ${reservationID} on ${date} successful`,
 		});
 	});
 
@@ -225,15 +225,15 @@ function peopleRoutes(database) {
 						{ date: date },
 						{ people: newPeopleList }
 					);
-					return res.status(200).json({msg: `Vaccination on ${date} successful!`});
+					return res.status(200).json({msg: `Vaccine reservation on ${date} successful!`});
 				}
 				else {
-					return res.status(304).json({msg: `No available timeslot on ${date}.`});
+					return res.status(304).json({msg: `No available timeslot for reservation on ${date}.`});
 				}
 			}
 			// 2. if not
 			else {
-				return res.status(400).json({msg: `Vaccination on ${date} is unavailable.`});
+				return res.status(400).json({msg: `Vaccine reservation on ${date} is unavailable.`});
 			}
 		} catch (e) {
 			if (e.message != null) {
@@ -242,7 +242,7 @@ function peopleRoutes(database) {
 			return res
 				.status(304)
 				.json({
-					msg: `vaccine ${reservationID} on ${date} unsuccessful.`,
+					msg: `Vaccine reservation on ${date} unsuccessful.`,
 				});
 		}
 	});
