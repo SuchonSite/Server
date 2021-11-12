@@ -101,14 +101,25 @@ function peopleRoutes(database) {
 		return res.json({ total_walkin: walkin });
 	});
 
-	router.patch("/cancel", async (_, res) => {
-		return res
-			.status(406)
-			.json({ msg: "no date or reservationID included" });
-	});
-	router.patch("/cancel/:date/:reservationID", async (req, res) => {
+	/**
+		PATCH people/cancel/:date/:reservationID
+		used: cancel people in peopleList in people schema by date and reservationID.
+		status code: 
+			- 200 OK
+			- 406 no date or reservationID params included in request.
+	*/
+	router.patch(["/cancel", 
+		"/cancel/:date", 
+		"cancel/:reservationID", 
+		"/cancel/:date/:reservationID"
+	], async (req, res) => {
 		console.log("cancle people by date and reservationID");
 		const { date, reservationID } = req.params;
+		if (!date || !reservationID) {
+			return res
+			.status(406)
+			.json({ msg: "no date or reservationID params included" });
+		}
 		const peopleData = await database.getPeopleInfoByDate({ date: date });
 
 		try {
