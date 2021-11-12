@@ -192,11 +192,26 @@ function peopleRoutes(database) {
 		});
 	});
 
-	router.patch("/add/:date", async (req, res) => {
+	/**
+		PATCH people/add/:date
+		used: patch add person into peopleList by date.
+		status code: 
+			- 200 Vaccination on {date} successful!
+			- 304 
+				- No available timeslot on {date}.
+				- vaccine ${reservationID} on {date} unsuccessful.
+			- 400 Vaccination on {date} is unavailable.
+			- 406 no date or reservationID params included in request.
+	*/
+	router.patch(["/add", "/add/:date"], async (req, res) => {
 		// get values from frontend
-		const data = req.body,
-			date = req.params.date,
-			peopleData = await database.getPeopleInfoByDate({date: date});
+		const data = req.body;
+		const { date } = req.params;
+		if (!date) {
+			return res.status(406).json({ msg: "no date param included" });
+		}
+			
+		const peopleData = await database.getPeopleInfoByDate({date: date});
 		// 1. find if the date already exists in db of that date
 		try {
 			if (peopleData != null) {
@@ -213,12 +228,12 @@ function peopleRoutes(database) {
 					return res.status(200).json({msg: `Vaccination on ${date} successful!`});
 				}
 				else {
-					return res.status(304).json({msg: `No available timeslot on ${date}`});
+					return res.status(304).json({msg: `No available timeslot on ${date}.`});
 				}
 			}
 			// 2. if not
 			else {
-				return res.status(400).json({msg: `Vaccination on ${date} is unavailable`});
+				return res.status(400).json({msg: `Vaccination on ${date} is unavailable.`});
 			}
 		} catch (e) {
 			if (e.message != null) {
@@ -227,7 +242,7 @@ function peopleRoutes(database) {
 			return res
 				.status(304)
 				.json({
-					msg: `vaccine ${reservationID} on ${date} unsuccessful`,
+					msg: `vaccine ${reservationID} on ${date} unsuccessful.`,
 				});
 		}
 	});
