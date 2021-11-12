@@ -146,13 +146,26 @@ function peopleRoutes(database) {
 		});
 	});
 
-	router.patch("/vaccinated", async (_, res) => {
-		return res
-			.status(406)
-			.json({ msg: "no date or reservationID included" });
-	});
-	router.patch("/vaccinated/:date/:reservationID", async (req, res) => {
+	/**
+		PATCH people/vaccinated/:date/:reservationID
+		used: vaccinate people in peopleList in people schema by date and reservationID.
+		status code: 
+			- 200 OK
+			- 304 vaccine ${reservationID} on ${date} unsuccessful
+			- 400 Err
+			- 406 no date or reservationID params included in request.
+	*/
+	router.patch(["/vaccinated", 
+		"/vaccinated/:date", 
+		"vaccinated/:reservationID", 
+		"/vaccinated/:date/:reservationID"
+	], async (req, res) => {
 		const { date, reservationID } = req.params;
+		if (!date || !reservationID) {
+			return res
+			.status(406)
+			.json({ msg: "no date or reservationID params included" });
+		}
 		const peopleData = await database.getPeopleInfoByDate({ date: date });
 
 		try {
