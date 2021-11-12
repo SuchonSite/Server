@@ -56,14 +56,23 @@ function peopleRoutes(database) {
 		return res.status(200);
 	});
 
-	router.get("/count/total", async (_, res) => {
-		return res.status(406).json({ msg: "no date included" });
-	});
-	router.get("/count/total/:date", async (req, res) => {
+	/**
+		GET people/count/total/:date
+		used: get counting of people in one date schema.
+		status code: 
+			- 200 OK
+			- 406 no date param included in request.
+	*/
+	router.get(["/count/total", "/count/total/:date"], async (req, res) => {
 		console.log("count people by date");
 		console.log(req.params);
+		const { date } = req.params;
+		if (!date) {
+			return res.status(406).json({ msg: "no date param included" });
+		}
+		
 		const peopleData = await database.getPeopleInfoByDate({
-			date: req.params.date,
+			date: date,
 		});
 		let result = helper.countPeople(peopleData);
 		return res.json(result);
