@@ -22,7 +22,7 @@ function peopleRoutes(database) {
 			- 200 OK
 			- 406 no date param included in request.
 	*/
-	router.get("/by_date", "/by_date/:date", async (req, res) => {
+	router.get(["/by_date", "/by_date/:date"], async (req, res) => {
 		console.log("get people by date");
 		console.log(req.params);
 		const { date } = req.params;
