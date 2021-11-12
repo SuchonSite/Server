@@ -15,16 +15,25 @@ function peopleRoutes(database) {
 		return res.send(allPeople);
 	});
 
-	router.get("/by_date", async (_, res) => {
-		return res.status(406).json({ msg: "no date included" });
-	});
-	router.get("/by_date/:date", async (req, res) => {
+	/**
+		GET people/by_date/:date
+		used: get people schema by date.
+		status code: 
+			- 200 OK
+			- 406 no date param included in request.
+	*/
+	router.get("/by_date", "/by_date/:date", async (req, res) => {
 		console.log("get people by date");
 		console.log(req.params);
+		const { date } = req.params;
+		if (!date) {
+			return res.status(406).json({ msg: "no date param included" });
+		}
+		
 		const people = await database.getPeopleInfoByDate({
-			date: req.params.date,
+			date: data
 		});
-		console.log(people);
+		// console.log(people);
 		return res.send(people);
 	});
 
