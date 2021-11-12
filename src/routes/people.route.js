@@ -41,7 +41,7 @@ function peopleRoutes(database) {
 		DELETE people/by_date/:date
 		used: delete people schena by date.
 		status code: 
-			- 200 OK
+			- 200 Deleted vaccine reservations from ${date}.
 			- 406 no date param included in request.
 	*/
 	router.delete(["/by_date", "/by_date/:date"], async (req, res) => {
@@ -53,7 +53,7 @@ function peopleRoutes(database) {
 		}
 		
 		database.deletePeopleInfo({ date: date });
-		return res.status(200);
+		return res.status(200).json({ msg: `Deleted vaccine reservations from ${date}.` });
 	});
 
 	/**
@@ -105,7 +105,8 @@ function peopleRoutes(database) {
 		PATCH people/cancel/:date/:reservationID
 		used: cancel people in peopleList in people schema by date and reservationID.
 		status code: 
-			- 200 OK
+			- 200 Removed reservationID ${reservationID} on ${date} successful
+			- 304 Remove ${reservationID} on ${date} unsuccessful
 			- 406 no date or reservationID params included in request.
 	*/
 	router.patch(["/cancel", 
@@ -150,8 +151,8 @@ function peopleRoutes(database) {
 		PATCH people/vaccinated/:date/:reservationID
 		used: vaccinate people in peopleList in people schema by date and reservationID.
 		status code: 
-			- 200 OK
-			- 304 vaccine ${reservationID} on ${date} unsuccessful
+			- 200 Vaccination reservationID : ${reservationID} on ${date} successful
+			- 304 Vaccination reservationID : ${reservationID} on ${date} unsuccessful
 			- 400 Err
 			- 406 no date or reservationID params included in request.
 	*/
@@ -196,12 +197,14 @@ function peopleRoutes(database) {
 		PATCH people/add/:date
 		used: patch add person into peopleList by date.
 		status code: 
-			- 200 Vaccination on {date} successful!
+			- 200 Vaccine reservation on ${date} successful!
 			- 304 
-				- No available timeslot on {date}.
-				- vaccine ${reservationID} on {date} unsuccessful.
-			- 400 Vaccination on {date} is unavailable.
-			- 406 no date or reservationID params included in request.
+				- No available timeslot for reservation on ${date}.
+				- Vaccine reservation on ${date} unsuccessful.
+			- 400
+				- Vaccine reservation on ${date} is unavailable.
+				- Err
+			- 406 no date param included.
 	*/
 	router.patch(["/add", "/add/:date"], async (req, res) => {
 		// get values from frontend
