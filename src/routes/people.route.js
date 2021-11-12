@@ -37,14 +37,21 @@ function peopleRoutes(database) {
 		return res.send(people);
 	});
 
-	router.delete("/by_date", async (_, res) => {
-		return res.status(406).json({ msg: "no date included" });
-	});
-	router.delete("/by_date/:date", async (req, res) => {
+	/**
+		DELETE people/by_date/:date
+		used: delete people schena by date.
+		status code: 
+			- 200 OK
+			- 406 no date param included in request.
+	*/
+	router.delete(["/by_date", "/by_date/:date"], async (req, res) => {
 		console.log("delete people by date");
 		console.log(req.params);
-		const date = req.params.date;
-
+		const { date } = req.params;
+		if (!date) {
+			return res.status(406).json({ msg: "no date param included" });
+		}
+		
 		database.deletePeopleInfo({ date: date });
 		return res.status(200);
 	});
