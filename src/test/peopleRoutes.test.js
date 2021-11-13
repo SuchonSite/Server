@@ -131,28 +131,102 @@ describe("GET /count", () => {
     })
 })
 
-describe("PATCH /cancle", () => {
+describe("PATCH /cancel", () => {
 
-    // test("cancle reservation", async () => {
-    //     const data = byDatePeopleInfo.data
-    //     getPeopleInfoByDate.mockReturnValueOnce(data)
-    //     const response = await request.get('/people/cancle/20-10-2021/10')
-    //     expect(response.status).toBe(200)
+    test("cancel reservation", async () => {
+        const data = byDatePeopleInfo.data
 
-    //     expect(response.body.count).toEqual(expect.any(Number))
-    //     expect(response.body.waiting).toEqual(expect.any(Number))
-    //     expect(response.body.vaccinated).toEqual(expect.any(Number))
-    // })
+        getPeopleInfoByDate.mockReturnValueOnce(data)
+        updatePeopleInfo.mockReturnValueOnce()
+        const response = await request.patch('/people/cancel/20-10-2021/10')
+        expect(response.status).toBe(200)
+        expect(response.body.msg).toBe('Removed reservationID 10 on 20-10-2021 successful')
+    })
 
     test("no date given", async () => {
         updatePeopleInfo.mockReturnValueOnce()
-        const response = await request.patch('/people/cancle/')
+        const response = await request.patch('/people/cancel/')
         expect(response.status).toBe(406)
+        expect(response.body.msg).toBe('no date or reservationID params included')
+    })
+
+    test("given reservationID but no date given", async () => {
+        updatePeopleInfo.mockReturnValueOnce()
+        const response = await request.patch('/people/cancel/10')
+        expect(response.status).toBe(406)
+        expect(response.body.msg).toBe('no date or reservationID params included')
     })
 
     test("no reservationID given", async () => {
         updatePeopleInfo.mockReturnValueOnce()
-        const response = await request.patch('/people/cancle/20-10-2021/')
+        const response = await request.patch('/people/cancel/20-10-2021/')
         expect(response.status).toBe(406)
+        expect(response.body.msg).toBe('no date or reservationID params included')
     })
+})
+
+describe("PATCH /vaccinated", () => {
+
+    test("vaccinated", async () => {
+        const data = byDatePeopleInfo.data
+
+        getPeopleInfoByDate.mockReturnValueOnce(data)
+        updatePeopleInfo.mockReturnValueOnce()
+        const response = await request.patch('/people/vaccinated/20-10-2021/10')
+        expect(response.status).toBe(200)
+        expect(response.body.msg).toBe('Vaccination reservationID : 10 on 20-10-2021 successful')
+    })
+    
+    test("no date given", async () => {
+        updatePeopleInfo.mockReturnValueOnce()
+        const response = await request.patch('/people/vaccinated/')
+        expect(response.status).toBe(406)
+        expect(response.body.msg).toBe('no date or reservationID params included')
+    })
+
+    test("given reservationID but no date given", async () => {
+        updatePeopleInfo.mockReturnValueOnce()
+        const response = await request.patch('/people/vaccinated/10')
+        expect(response.status).toBe(406)
+        expect(response.body.msg).toBe('no date or reservationID params included')
+    })
+
+    test("no reservationID given", async () => {
+        updatePeopleInfo.mockReturnValueOnce()
+        const response = await request.patch('/people/vaccinated/20-10-2021/')
+        expect(response.status).toBe(406)
+        expect(response.body.msg).toBe('no date or reservationID params included')
+    })
+
+})
+
+describe("PATCH /add", () => {
+
+    test("add walk-in", async () => {
+        const data = byDatePeopleInfo.data
+
+        getPeopleInfoByDate.mockReturnValueOnce(data)
+        updatePeopleInfo.mockReturnValueOnce()
+        const response = await request.patch('/people/add/20-10-2021')
+        expect(response.status).toBe(200)
+        expect(response.body.msg).toBe('Vaccine reservation on 20-10-2021 successful!')
+    })
+
+    // test("add walk-in when slot is full", async () => {
+    //     const data = byDatePeopleInfo.data
+
+    //     getPeopleInfoByDate.mockReturnValueOnce(data)
+    //     updatePeopleInfo.mockReturnValueOnce()
+    //     const response = await request.patch('/people/add/20-10-2021')
+    //     expect(response.status).toBe(400)
+    //     expect(response.body.msg).toBe('Vaccine reservation on 20-10-2021 is unavailable.')
+    // })
+    
+    test("no date given", async () => {
+        updatePeopleInfo.mockReturnValueOnce()
+        const response = await request.patch('/people/vaccinated/')
+        expect(response.status).toBe(406)
+        expect(response.body.msg).toBe('no date or reservationID params included')
+    })
+
 })
