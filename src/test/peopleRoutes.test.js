@@ -12,6 +12,7 @@ const getAllPeopleInfo = jest.fn();
 const getPeopleInfoByDate = jest.fn();
 const deletePeopleInfo = jest.fn();
 const updatePeopleInfo = jest.fn();
+const dbStorePeople = jest.fn();
 
 const fetcher = {
     fetchDataToList
@@ -22,19 +23,25 @@ const database = {
     getAllPeopleInfo,
     getPeopleInfoByDate,
     deletePeopleInfo,
-    updatePeopleInfo
+    updatePeopleInfo,
+    dbStorePeople
 }
 
 const app = makeApp(database, fetcher);
 const request = supertest(app);
 
 beforeEach(() => {
+    jest.resetModules()
     fetchDataToList.mockReset()
     connectDB.mockReset()
     getAllPeopleInfo.mockReset()
     getPeopleInfoByDate.mockReset()
     deletePeopleInfo.mockReset()
     updatePeopleInfo.mockReset()
+});
+
+afterEach(() => {
+    jest.clearAllMocks()
 });
 
 describe("GET /people", () => {
@@ -212,16 +219,26 @@ describe("PATCH /add", () => {
         expect(response.body.msg).toBe('Vaccine reservation on 20-10-2021 successful!')
     })
 
-    // test("add walk-in when slot is full", async () => {
-    //     const data = byDatePeopleInfo.data
+    test("add walk-in when unavailable", async () => {
+        const data = byDatePeopleInfo.data
 
-    //     getPeopleInfoByDate.mockReturnValueOnce(data)
-    //     updatePeopleInfo.mockReturnValueOnce()
-    //     const response = await request.patch('/people/add/20-10-2021')
-    //     expect(response.status).toBe(400)
-    //     expect(response.body.msg).toBe('Vaccine reservation on 20-10-2021 is unavailable.')
-    // })
+        getPeopleInfoByDate.mockReturnValueOnce()
+        updatePeopleInfo.mockReturnValueOnce()
+        const response = await request.patch('/people/add/20-10-2021')
+        expect(response.status).toBe(400)
+        expect(response.body.msg).toBe('Vaccine reservation on 20-10-2021 is unavailable.')
+    })
     
+    test("add walk-in when already vacinated", async () => {
+        const data = byDatePeopleInfo.data
+
+        getPeopleInfoByDate.mockReturnValueOnce(data)
+        updatePeopleInfo.mockReturnValueOnce()
+        const response = await request.patch('/people/add/20-10-2021')
+        expect(response.status).toBe(400)
+        expect(response.body.msg).toBe('this person already have vaccination!')
+    })
+
     test("no date given", async () => {
         updatePeopleInfo.mockReturnValueOnce()
         const response = await request.patch('/people/vaccinated/')
