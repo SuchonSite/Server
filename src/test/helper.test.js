@@ -1,15 +1,18 @@
-/** 
+/**
  * Unit tests for helper.js
  * Require helper module
  */
 const helper = require('../helpers/helper')
+const {modifyPeopleList, convertGovJson, arrangeQueuePeopleList, removePeople, vaccinePeople} = require("../helpers/helper");
 
 /**
  * Sample type of user undertest.
  */
 let normal_young_user;
 let listOfUser;
-
+let userConvertedAndHaveVaccinated;
+let listOfUser1;
+let listOfUserWithVaccinated;
 /**
  * Set Up
  * Initializes some user information
@@ -58,6 +61,142 @@ beforeEach(() => {
         }
 
     ]
+    listOfUser1 = [
+        {
+            "reservation_id": 1,
+            "register_timestamp": "2021-10-20T15:19:56.609000",
+            "owner": {
+                "name": "Joel1",
+                "surname": "Miller",
+                "birth_date": "2000-10-20",
+                "citizen_id": "1234567890123",
+                "occupation": "Teacher",
+                "address": "Kasetsart University"
+            }
+        },
+        {
+            "reservation_id": 2,
+            "register_timestamp": "2021-10-21T15:19:56.609000",
+            "owner": {
+                "name": "Joel2",
+                "surname": "Miller",
+                "birth_date": "1959-10-20",
+                "citizen_id": "1234567890124",
+                "occupation": "Doctor",
+                "address": "Bangkok Hospital"
+            }
+        },
+        {
+            "reservation_id": 3,
+            "register_timestamp": "2021-10-21T15:19:56.609000",
+            "owner": {
+                "name": "Joel3",
+                "surname": "Miller",
+                "birth_date": "1940-10-20",
+                "citizen_id": "1234567890124",
+                "occupation": "",
+                "address": "Bangkok"
+            }
+        }
+
+    ]
+    userConvertedAndHaveVaccinated = {
+        people: [{
+            "reservation_id": 1,
+            "register_timestamp": "2021-10-20T17:12:39.738000",
+            "name": "Joel1",
+            "surname": "Miller",
+            "birth_date": "2000-10-20",
+            "citizen_id": "1234567890123",
+            "occupation": "doctor",
+            "address": "Bangkok Hospital",
+            "priority": "1",
+            "vaccinated": true,
+            "vac_time": "9"
+
+
+        },
+            {
+                "reservation_id": 2,
+                "register_timestamp": "2021-10-21T15:19:56.609000",
+                "name": "Joel2",
+                "surname": "Miller",
+                "birth_date": "2000-10-20",
+                "citizen_id": "1234567890124",
+                "occupation": "Teacher",
+                "address": "Kasetsart University",
+                "priority": "3",
+                "vaccinated": false,
+                "vac_time": "9"
+
+            },{
+                "reservation_id": 3,
+                "register_timestamp": "2021-10-21T15:19:56.609000",
+                "name": "Joel3",
+                "surname": "Miller",
+                "birth_date": "1950-10-20",
+                "citizen_id": "1234567890124",
+                "occupation": "Merchant",
+                "address": "Kasetsart University",
+                "priority": "2",
+                "vaccinated": false,
+                "vac_time": "9"
+
+            }]
+
+
+    };
+     listOfUserWithVaccinated = [
+        {
+            "reservation_id": 1,
+            "register_timestamp": "2021-10-20T15:19:56.609000",
+            "owner": {
+                "name": "Joel1",
+                "surname": "Miller",
+                "birth_date": "2000-10-20",
+                "citizen_id": "1234567890123",
+                "occupation": "Teacher",
+                "address": "Kasetsart University",
+                "priority": "3",
+                "vaccinated": true,
+                "vac_time": "9"
+            }
+        },
+        {
+            "reservation_id": 2,
+            "register_timestamp": "2021-10-21T15:19:56.609000",
+            "owner": {
+                "name": "Joel2",
+                "surname": "Miller",
+                "birth_date": "1959-10-20",
+                "citizen_id": "1234567890124",
+                "occupation": "Doctor",
+                "address": "Bangkok Hospital",
+                "priority": "1",
+                "vaccinated": false,
+                "vac_time": "9"
+
+            }
+        },
+        {
+            "reservation_id": 3,
+            "register_timestamp": "2021-10-21T15:19:56.609000",
+            "owner": {
+                "name": "Joel3",
+                "surname": "Miller",
+                "birth_date": "1940-10-20",
+                "citizen_id": "1234567890124",
+                "occupation": "",
+                "address": "Bangkok",
+                "priority": "2",
+                "vaccinated": false,
+                "vac_time": "9"
+            }
+        }
+
+    ]
+
+
 
 });
 
@@ -108,7 +247,7 @@ test("calulate user's age of user who was born on 1 Jan this year", () => {
  * Function calcAge must throw error with massage 'you are using invalid date'
  */
 test("calulate user's age of user who was born in the future", () => {
-    expect(() => helper.calcAge("31-12-2022")).toThrow('you are using invalid date');
+    expect(() => helper.calcAge("31-12-2022")).toThrow(new Error('you are using invalid date'));
 });
  
 /**
@@ -126,7 +265,7 @@ test("calulate user's age with date 01 (have zero in front)", () => {
  * Function calcAge must throw error with massage 'you are using wrong date format'
  */
 test("calulate user's age of user who was born in 'July' ", () => {
-    expect(() => helper.calcAge("2000-July-1")).toThrow('you are using invalid date format');
+    expect(() => helper.calcAge("2000-July-1")).toThrow(new Error('you are using invalid date format'));
 });
 
 /**
@@ -135,7 +274,7 @@ test("calulate user's age of user who was born in 'July' ", () => {
  * Function calcAge must throw error with massage 'you are using wrong date format'
  */
 test("calulate user's age with empty string", () => {
-    expect(() => helper.calcAge("")).toThrow('you are using invalid date format');
+    expect(() => helper.calcAge("")).toThrow(new Error('you are using invalid date format'));
 });
 
 /**
@@ -144,7 +283,7 @@ test("calulate user's age with empty string", () => {
  * Function calcAge must throw error with massage 'you are using wrong date format'
  */
 test("calulate user's age with format yyyy-mm-dd", () => {
-    expect(() => helper.calcAge("2-12-2000")).toThrow('you are using invalid date format');
+    expect(() => helper.calcAge("2-12-2000")).toThrow(new Error('you are using invalid date format'));
 });
 
 /**
@@ -153,7 +292,7 @@ test("calulate user's age with format yyyy-mm-dd", () => {
  * Function calcAge must throw error with massage 'you are using invalid date'
  */
 test("calulate user's age of user who was born on day 0", () => {
-    expect(() => helper.calcAge("0-1-2000")).toThrow('you are using invalid date');
+    expect(() => helper.calcAge("0-1-2000")).toThrow(new Error('you are using invalid date format'));
 });
 
 /**
@@ -161,8 +300,8 @@ test("calulate user's age of user who was born on day 0", () => {
  * Given a date with day -1
  * Function calcAge must throw error with massage 'you are using invalid date'
  */
-test("calulate user's age of user who was born on day -1, test นี้แก้ได้นะ", () => {
-    expect(() => helper.calcAge("-1-01-2000")).toThrow('you are using invalid date');
+test("calulate user's age of user who was born on day -1", () => {
+    expect(() => helper.calcAge("-1-01-2000")).toThrow(new Error('you are using invalid date format'));
 });
 
 /**
@@ -171,7 +310,7 @@ test("calulate user's age of user who was born on day -1, test นี้แก�
  * Function calcAge must throw error with massage 'you are using wrong date format'
  */
 test("calulate user's age with no '-' format", () => {
-    expect(() => helper.calcAge("01012000")).toThrow('you are using invalid date format');
+    expect(() => helper.calcAge("01012000")).toThrow(new Error('you are using invalid date format'));
 });
 
 /**
@@ -180,7 +319,7 @@ test("calulate user's age with no '-' format", () => {
  * Function calcAge must throw error with massage 'you are using wrong date format'
  */
 test("calulate user's age with '/' format", () => {
-    expect(() => helper.calcAge("1/1/2000")).toThrow('you are using invalid date format');
+    expect(() => helper.calcAge("1/1/2000")).toThrow(new Error('you are using invalid date format'));
 });
 
 /**
@@ -189,7 +328,7 @@ test("calulate user's age with '/' format", () => {
  * Function calcAge must throw error with massage 'you are using invalid date'
  */
 test("calulate user's age with invalid month", () => {
-    expect(() => helper.calcAge("1-13-2000")).toThrow('you are using invalid date');
+    expect(() => helper.calcAge("1-13-2000")).toThrow(new Error('you are using invalid date format'));
 });
 
 /**
@@ -198,7 +337,7 @@ test("calulate user's age with invalid month", () => {
  * Function calcAge must throw error with massage 'you are using invalid date'
  */
 test("calulate user's age with invalid date", () => {
-    expect(() => helper.calcAge("32-1-2000")).toThrow('you are using invalid date');
+    expect(() => helper.calcAge("32-1-2000")).toThrow(new Error('you are using invalid date format'));
 });
 
 /**
@@ -486,7 +625,7 @@ test("set priority for exact 60 user", () => {
 /**
  * Test Case ID: 39
  * Given normal user with exact 61 year old
- * Function setPriorityPerson must return priority level 3
+ * Function setPriorityPerson must return priority level 2
  */
 test("set priority for exact 61 user", () => {
     const normal_young_user = {reservation_id: 1};
@@ -516,3 +655,127 @@ test("set priority for exact 59 user", () => {
     normal_young_user['address'] = "Kasetsart University";
     expect(helper.setPriorityPerson(normal_young_user)).toEqual("3");
 });
+/**
+ * Test Case ID: 41
+ * Given people list with 3 person
+ * Function arrangeQueuePeopleList must return queueList with true correct queue
+ */
+test("arrange queue people list with people list",() =>{
+    let foo = arrangeQueuePeopleList(modifyPeopleList(listOfUser1));
+    expect(foo[0].reservation_id).toEqual(2);
+    expect(foo[1].reservation_id).toEqual(3);
+    expect(foo[2].reservation_id).toEqual(1);
+
+});
+
+
+/**
+ * Test Case ID: 42
+ * Given empty people data
+ * Function countPeople must return "count: 0, waiting: 0, vaccined: 0"
+ */
+test("count people with empty people data",() =>{
+
+    const foo = {
+        people:[]
+    };
+    expect(helper.countPeople(foo)).toEqual({
+        "count": 0,
+        "vaccinated": 0,
+        "waiting": 0
+    });
+} );
+
+/**
+ * Test Case ID: 43
+ * Given people data
+ * Function countPeople must return correct number of count, waiting and vaccined
+ */
+test("count people with people data",()=> {
+
+
+    expect(helper.countPeople(userConvertedAndHaveVaccinated)).toEqual(
+        {
+            "count": 3,
+            "vaccinated": 1,
+            "waiting": 2
+        });
+});
+
+/**
+ * Test Case ID: 44
+ * Given empty peopleList and reserve_id
+ * Function removePeople must return Error with text:peopleList is empty
+ */
+test("remove people with empty people list and reserve_id",()=>{
+    const foo = [];
+    expect(() => helper.removePeople(foo,1)).toThrow(new Error("peopleList is empty"));
+
+});
+
+/**
+ * Test Case ID: 45
+ * Given peopleList and wrong reserve_id
+ * Function removePeople must return Error with text:person not found
+ */
+test("remove people with empty people list and wrong reserve_id",()=>{
+    let foo = arrangeQueuePeopleList(modifyPeopleList(listOfUser1));
+    expect(() => helper.removePeople(foo,-1)).toThrow(new Error("person not found"));
+    expect(() => helper.removePeople(foo,5)).toThrow(new Error("person not found"));
+
+});
+
+/**
+ * Test Case ID: 46
+ * Given peopleList and reserve_id
+ * Function removePeople must return peopleList without deleted reserve_id
+ */
+test("remove people with people list and reserve_id",()=>{
+    let foo = removePeople(listOfUser1,1);
+    expect(foo.length).toBe(2);
+    expect(foo[0].reservation_id).toBe(2);
+    expect(foo[1].reservation_id).toBe(3);
+});
+
+/**
+ * Test Case ID: 47
+ * Given empty peopleList and reserve_id
+ * Function vaccinePeople must return Error with text:peopleList is empty
+ */
+test("vaccine people with empty people list and reserve_id",()=>{
+    const foo = [];
+    expect(() => helper.vaccinePeople(foo,1)).toThrow(new Error("peopleList is empty"));
+
+});
+
+/**
+ * Test Case ID: 48
+ * Given peopleList and wrong reserve_id
+ * Function vaccinePeople must return Error with text:person not found
+ *
+ */
+test("vaccine people with people list and wrong reserve_id",()=>{
+
+   expect(() => helper.vaccinePeople(listOfUser1,6)).toThrow(new Error("person not found"));
+    expect(() => helper.vaccinePeople(listOfUser1,-1)).toThrow(new Error("person not found"));
+
+});
+
+/**
+ * Test Case ID: 49
+ * Given peopleList and reserve_id people that vaccinated
+ * Function vaccinePeople must return Error with text:this person already take vaccine!
+ */
+test("vaccine people with people list and reserve_id people that vaccinated", ()=>{
+   expect(()=> helper.vaccinePeople(listOfUserWithVaccinated,1)).toThrow(new Error("this person already take vaccine!"))
+});
+
+/**
+ * Test Case ID: 50
+ * Given peopleList and reserve_id people that haven't got a vaccine
+ * Function vaccinePeople must return peopleList with updated data
+ */
+test("vaccine people with people list and reserve_id people that haven't vaccinated",()=>{
+    let foo = vaccinePeople(listOfUserWithVaccinated,2);
+    expect(foo[1].vaccinated).toBe(true);
+})
