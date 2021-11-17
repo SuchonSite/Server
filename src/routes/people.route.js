@@ -4,10 +4,50 @@ function peopleRoutes(database) {
 		helper = require("../helpers/helper");
 
 	/**
-		GET people/all
-		used: get all people schema (by date).
-		status code: 
-			- 200 OK
+	 * New person
+	 * @typedef {object} NewPerson
+	 * @property {string} name - name
+	 * @property {string} surname - surname
+	 * @property {string} birth_date - birth_date
+	 * @property {string} citizen_id - citizen_id
+	 * @property {string} address - address
+	 */
+
+	/**
+	 * Person
+	 * @typedef {object} Person
+	 * @property {integer} reservation_id - name
+	 * @property {string} register_timestamp - surname
+	 * @property {string} name - birth_date
+	 * @property {string} surname - citizen_id
+	 * @property {string} birth_date - address
+	 * @property {string} citizen_id - name
+	 * @property {string} occupation - surname
+	 * @property {string} address - birth_date
+	 * @property {string} priority - citizen_id
+	 * @property {boolean} vaccinated - address
+	 * @property {integer} vac_time - address
+	 */
+
+	/**
+	 * People
+	 * @typedef {object} People
+	 * @property {string} _id - _id
+	 * @property {string} date - date
+	 * @property {array<Person>} people - people
+	 */
+
+	/**
+	 * All People
+	 * @typedef {object} All_People
+	 * @property {array<People>} people_each_day
+	 */
+
+
+	/**
+		GET /people/all
+		@summary get all people from people schema
+		@return {All_People} 200 - success response - application/json
 	*/
 	router.get("/all", async (_, res) => {
 		const allPeople = await database.getAllPeopleInfo();
@@ -16,11 +56,14 @@ function peopleRoutes(database) {
 	});
 
 	/**
-		GET people/by_date/:date
-		used: get people schema by date.
-		status code: 
-			- 200 OK
-			- 406 no date param included in request.
+		GET /people/by_date/{date}
+		@summary get all people schema in a specific date
+		@param {string} date.path - Date to get that date people
+		@return {People} 200 - Success response - application/json
+		@return {object} 406 - No date param included in request - application/json
+		@example response - 200 - Success response
+		@example response - 406 - No date param included
+		{ "msg": "no date param included" }
 	*/
 	router.get(["/by_date", "/by_date/:date"], async (req, res) => {
 		// console.log("get people by date");
@@ -38,11 +81,15 @@ function peopleRoutes(database) {
 	});
 
 	/**
-		DELETE people/by_date/:date
-		used: delete people schena by date.
-		status code: 
-			- 200 Deleted vaccine reservations from ${date}.
-			- 406 no date param included in request.
+		DELETE /people/by_date/{date}
+		@summary delete people schena by date.
+		@param {string} date.path - date to get that date people
+		@return {object} 200 - Deleted vaccine reservations from that date. - application/json
+		@return {object} 406 - no date param included in request. - application/json
+		@example response - 200 - Deleted vaccine reservations from that date.
+		{ "msg": "Deleted vaccine reservations from that date" }
+		@example response - 406 - no date param included in request.
+		{ "msg": "No date param included in request" }
 	*/
 	router.delete(["/by_date", "/by_date/:date"], async (req, res) => {
 		// console.log("delete people by date");
@@ -57,11 +104,24 @@ function peopleRoutes(database) {
 	});
 
 	/**
-		GET people/count/total/:date
-		used: get counting of people in one date schema.
-		status code: 
-			- 200 OK
-			- 406 no date param included in request.
+		GET /people/count/total/{date}
+		@summary get counting of people in one date schema.
+		@param {string} date.path - date to get that date people
+		@return {object} 200 - Deleted vaccine reservations from that date successful. - application/json
+		@return {object} 406 - No date param included in request. - application/json
+		@example response - 200 - Deleted vaccine reservations from that date successful.
+		{
+			"count": 3,
+			"waiting": 0,
+			"vaccinated": 3,
+			"queue": {
+				"9": 3
+			}
+		}
+		@example response - 406 - No date param included in request.
+		{
+			"msg": "No date param included in request"
+		} 
 	*/
 	router.get(["/count/total", "/count/total/:date"], async (req, res) => {
 		// console.log("count people by date");
@@ -79,11 +139,16 @@ function peopleRoutes(database) {
 	});
 
 	/**
-		GET people/count/walkin/:date
-		used: get only walk in available number in queue by date.
-		status code:
-			- 200 OK
-			- 406 no date param included in request.
+		GET /people/count/walkin/{date}
+		@summary get only walk in available number in queue by date.
+		@param {string} date.path - date to get that date people
+		@return {object} 200 - OK - application/json
+		@return {object} 406 - No date param included in request. - application/json
+		@example response - 200 - OK
+		{ "total_walkin": 27 }
+		@example response - 406 - No date param included in request.
+		{ "msg": "no date param included" }
+
 	*/
 	router.get(["/count/walkin", "/count/walkin/:date"], async (req, res) => {
 		// console.log("count walkin people by date");
@@ -101,25 +166,19 @@ function peopleRoutes(database) {
 		return res.json({ total_walkin: walkin });
 	});
 
-    router.delete('/by_date', async (_, res) => {
-        return res.status(406).json({"msg": "no date included"});
-    })
-    router.delete('/by_date/:date', async (req, res) => {
-        // console.log("delete people by date");
-        // console.log(req.params);
-        const date = req.params.date;
-        
-        await database.deletePeopleInfo({ "date": date });
-        return res.status(200)
-    })
-
 	/**
-		PATCH people/cancel/:date/:reservationID
-		used: cancel people in peopleList in people schema by date and reservationID.
-		status code: 
-			- 200 Removed reservationID ${reservationID} on ${date} successful
-			- 304 Remove ${reservationID} on ${date} unsuccessful
-			- 406 no date or reservationID params included in request.
+		PATCH /people/cancel/:date/{reservationID}
+		@summary cancel people in peopleList in people schema by date and reservationID.
+		@param {string} reservationID.path - reservationID to get that person
+		@return {object} 200 - Removed the reservationID on that date successful
+		@return {object} 304 - Remove the reservationID on that date unsuccessful
+		@return {object} 406 - No date or reservationID params included in request.
+		@example response - 200 - Removed the reservationID on that date successful
+		{ "msg": "Removed reservationID [reservationID] on [date] successful" }
+		@example response - 304 - Remove the reservationID on that date unsuccessful
+		{ "msg": "Remove [reservationID] on [date] unsuccessful"}
+		@example response - 406 - No date or reservationID params included in request.
+		{ "msg": "no date or reservationID params included" }
 	*/
 	router.patch(["/cancel", 
 		"/cancel/:date", 
@@ -160,13 +219,21 @@ function peopleRoutes(database) {
 	});
 
 	/**
-		PATCH people/vaccinated/:date/:reservationID
-		used: vaccinate people in peopleList in people schema by date and reservationID.
-		status code: 
-			- 200 Vaccination reservationID : ${reservationID} on ${date} successful
-			- 304 Vaccination reservationID : ${reservationID} on ${date} unsuccessful
-			- 400 Err
-			- 406 no date or reservationID params included in request.
+		PATCH /people/vaccinated/:date/{reservationID}
+		@summary vaccinate people in peopleList in people schema by date and reservationID.
+		@param {string} reservationID.path - reservationID to get that person
+		@return {object} 200 - Vaccination the reservationID on that date successful
+		@return {object} 304 - Vaccination the reservationID on that date unsuccessful
+		@return {object} 400 - Err
+		@return {object} 406 - No date or reservationID params included in request.
+		@example response - 200 - Vaccination the reservationID on that date successful
+		{ "msg": "Vaccination reservationID : ${reservationID} on ${date} successful" }
+		@example response - 304 - Vaccination the reservationID on that date unsuccessful
+		{ "msg": "Vaccination reservationID : ${reservationID} on ${date} unsuccessful"}
+		@example response - 400 - Err
+		{ "msg": "[Err message]" }
+		@example response - 406 - No date or reservationID params included in request.
+		{ "msg": "no date or reservationID params included" }
 	*/
 	router.patch(["/vaccinated", 
 		"/vaccinated/:date", 
@@ -206,17 +273,28 @@ function peopleRoutes(database) {
 	});
 
 	/**
-		PATCH people/add/:date
-		used: patch add person into peopleList by date.
-		status code: 
-			- 200 Vaccine reservation on ${date} successful!
-			- 304 
-				- No available timeslot for reservation on ${date}.
-				- Vaccine reservation on ${date} unsuccessful.
-			- 400
-				- Vaccine reservation on ${date} is unavailable.
-				- Err
-			- 406 no date param included.
+		PATCH /people/add/{date}
+		@summary patch add person into peopleList by date.
+		@param {string} date.path - date to get that date people
+		@param {NewPerson} request.body - a person data
+		@return {object} 200 - Vaccine reservation on that date successful!
+		@return {object} 304 - No available timeslot for reservation on ${date}.
+		@return {object} 304 - Vaccine reservation on that date unsuccessful.
+		@return {object} 400 - Vaccine reservation on that date is unavailable.
+		@return {object} 400 - Err.
+		@return {object} 406 - No date param included.
+		@example response - 200 - Vaccine reservation on that date successful!
+		{ "msg": "Vaccine reservation on ${date} successful!"}
+		@example response - 304 - No available timeslot for reservation on ${date}.
+		{ "msg": "No available timeslot for reservation on ${date}."}
+		@example response - 304 - Vaccine reservation on that date unsuccessful.
+		{ "msg": "Vaccine reservation on ${date} unsuccessful."}
+		@example response - 400 - Vaccine reservation on that date is unavailable.
+		{ "msg": "Vaccine reservation on [date] is unavailable." }
+		@example response - 400 - Err.
+		{ "msg": "[Err message]" }
+		@example response - 406 - No date param included.
+		{ "msg": "no date param included" }
 	*/
 	router.patch(["/add", "/add/:date"], async (req, res) => {
 		// get values from frontend
