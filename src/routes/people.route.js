@@ -23,8 +23,8 @@ function peopleRoutes(database) {
 			- 406 no date param included in request.
 	*/
 	router.get(["/by_date", "/by_date/:date"], async (req, res) => {
-		console.log("get people by date");
-		console.log(req.params);
+		// console.log("get people by date");
+		// console.log(req.params);
 		const { date } = req.params;
 		if (!date) {
 			return res.status(406).json({ msg: "no date param included" });
@@ -45,8 +45,8 @@ function peopleRoutes(database) {
 			- 406 no date param included in request.
 	*/
 	router.delete(["/by_date", "/by_date/:date"], async (req, res) => {
-		console.log("delete people by date");
-		console.log(req.params);
+		// console.log("delete people by date");
+		// console.log(req.params);
 		const { date } = req.params;
 		if (!date) {
 			return res.status(406).json({ msg: "no date param included" });
@@ -64,8 +64,8 @@ function peopleRoutes(database) {
 			- 406 no date param included in request.
 	*/
 	router.get(["/count/total", "/count/total/:date"], async (req, res) => {
-		console.log("count people by date");
-		console.log(req.params);
+		// console.log("count people by date");
+		// console.log(req.params);
 		const { date } = req.params;
 		if (!date) {
 			return res.status(406).json({ msg: "no date param included" });
@@ -86,8 +86,8 @@ function peopleRoutes(database) {
 			- 406 no date param included in request.
 	*/
 	router.get(["/count/walkin", "/count/walkin/:date"], async (req, res) => {
-		console.log("count walkin people by date");
-		console.log(req.params);
+		// console.log("count walkin people by date");
+		// console.log(req.params);
 		const { date } = req.params;
 		if (!date) {
 			return res.status(406).json({ msg: "no date param included" });
@@ -105,8 +105,8 @@ function peopleRoutes(database) {
         return res.status(406).json({"msg": "no date included"});
     })
     router.delete('/by_date/:date', async (req, res) => {
-        console.log("delete people by date");
-        console.log(req.params);
+        // console.log("delete people by date");
+        // console.log(req.params);
         const date = req.params.date;
         
         await database.deletePeopleInfo({ "date": date });
@@ -126,7 +126,7 @@ function peopleRoutes(database) {
 		"cancel/:reservationID", 
 		"/cancel/:date/:reservationID"
 	], async (req, res) => {
-		console.log("cancle people by date and reservationID");
+		// console.log("cancle people by date and reservationID");
 		const { date, reservationID } = req.params;
 		if (!date || !reservationID) {
 			return res

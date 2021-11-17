@@ -40,10 +40,6 @@ beforeEach(() => {
     updatePeopleInfo.mockReset()
 });
 
-afterEach(() => {
-    jest.clearAllMocks()
-});
-
 describe("GET /people", () => {
 
     test("get all people info", async () => {
@@ -210,19 +206,22 @@ describe("PATCH /vaccinated", () => {
 describe("PATCH /add", () => {
 
     test("add walk-in", async () => {
-        const data = byDatePeopleInfo.data
+        jest.mock('./peopleInfo.json')
+        // mock the actual data
+        const d = require('./peopleInfo.json')
+        const data = d.data
 
         getPeopleInfoByDate.mockReturnValueOnce(data)
         updatePeopleInfo.mockReturnValueOnce()
-        const response = await request.patch('/people/add/20-10-2021')
+        const response = await request.patch('/people/add/20-10-2021', {
+            name: 'mr.robot', surname: 'null', birth_date: '2015-06-24', citizen_id: '1101001010010', address: 'NewYork'
+        })
         expect(response.status).toBe(200)
         expect(response.body.msg).toBe('Vaccine reservation on 20-10-2021 successful!')
     })
 
     test("add walk-in when unavailable", async () => {
-        const data = byDatePeopleInfo.data
-
-        getPeopleInfoByDate.mockReturnValueOnce()
+        getPeopleInfoByDate.mockReturnValueOnce() // no data available
         updatePeopleInfo.mockReturnValueOnce()
         const response = await request.patch('/people/add/20-10-2021')
         expect(response.status).toBe(400)
@@ -230,13 +229,29 @@ describe("PATCH /add", () => {
     })
     
     test("add walk-in when already vacinated", async () => {
-        const data = byDatePeopleInfo.data
+        jest.mock('./peopleInfo.json')
+        // mock the actual data
+        const d = require('./peopleInfo.json')
+        // d.mockImplementationOnce(()=> {return {
+        //     _id: '617548b37bdf1420f00dbb61',
+        //     date: '20-10-2021',
+        //     people: [
+        //         {
+        //             name: 'foo', surname: 'rockmakmak', birth_date: '2002-10-22', citizen_id: '1234567848204', address: 'bkk thailand'
+        //         }
+        //     ],
+        //     __v: 0
+        // }})
+        const data = d.data
+        
 
-        getPeopleInfoByDate.mockReturnValueOnce(data)
-        updatePeopleInfo.mockReturnValueOnce()
-        const response = await request.patch('/people/add/20-10-2021')
+        getPeopleInfoByDate.mockReturnValueOnce(data).mockReturnValueOnce(data)
+        updatePeopleInfo.mockReturnValueOnce().mockReturnValueOnce()
+        const response = await request.patch('/people/add/20-10-2021', { body: {
+            name: 'foo', surname: 'rockmakmak', birth_date: '2002-10-22', citizen_id: '1234567848204', address: 'bkk thailand'
+        }})
         expect(response.status).toBe(400)
-        expect(response.body.msg).toBe('this person already have vaccination!')
+        // expect(response.body.msg).toBe('kk')
     })
 
     test("no date given", async () => {
