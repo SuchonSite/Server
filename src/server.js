@@ -12,10 +12,11 @@ const expressJSDocSwagger = require('express-jsdoc-swagger');
 const options = {
   info: {
     version: '1.0.0',
-    title: 'Albums store',
+    title: 'Suchon Site',
     license: {
       name: 'MIT',
     },
+    description: 'Suchon Site API documentation'
   },
   security: {
     BasicAuth: {
