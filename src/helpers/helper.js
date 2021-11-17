@@ -204,7 +204,9 @@ function addPeopleToList(peopleList, newPersonData, queue) {
   if (peopleList == null) {
     throw new Error("peopleList is empty");
   }
-  const person = peopleList.find((person) => person.citizen_id == citizen_id);
+  var pplist = peopleList;
+  const person = pplist.find((person) => person.citizen_id == citizen_id);
+  // console.log(person);
   if (person) throw new Error("this person already have vaccination!");
   else {
     var m = new Date();
@@ -246,10 +248,10 @@ function addPeopleToList(peopleList, newPersonData, queue) {
       vaccinated: false,
       vac_time: parseInt(vactime),
     };
-    peopleList.push(np);
-    console.log(peopleList);
+    pplist.push(np);
+    // console.log(peopleList);
   }
-  return peopleList;
+  return pplist;
 }
 
 function findAvailableTimeSlot(peopleList) {
