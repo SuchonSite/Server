@@ -60,6 +60,7 @@ function peopleRoutes(database) {
 		@summary get all people schema in a specific date
 		@param {string} date.path - Date to get that date people
 		@return {People} 200 - Success response - application/json
+		@return {object} 204 - No people in this date
 		@return {object} 406 - No date param included in request - application/json
 		@example response - 200 - Success response
 		@example response - 406 - No date param included
@@ -76,6 +77,7 @@ function peopleRoutes(database) {
 		const people = await database.getPeopleInfoByDate({
 			date: date
 		});
+		if (people === null) return res.status(204).end();
 		// console.log(people);
 		return res.send(people);
 	});
@@ -102,6 +104,41 @@ function peopleRoutes(database) {
 		database.deletePeopleInfo({ date: date });
 		return res.status(200).json({ msg: `Deleted vaccine reservations from ${date}.` });
 	});
+	/**
+	 	GET /people/by_reservationID/{reservationID}
+		 @summary get person by reservationID
+		 @param {string} reservationID.path - reservationID to get that person information
+		 @return {Person} 200 - Success response - application/json
+		 @return {object} 204 - Can't find that person from the specific reservationID
+		 @return {object} 400 - Err - application/json
+		 @return {object} 406 - No reservationId included in request - application/json
+		 @example response - 200 - Success response
+		 @example response - 204 - Can't find that person from the specific reservationID
+		 @example response - 400 - Err
+		 { "msg" : "[Err message]"}
+		 @example response - 406 - No reservationId included in request
+		 { "msg" : "No reservationId included in request"}
+		
+	 */
+	router.get(["/by_reservationID", "/by_reservationID/:reservationID"], async (req, res) => {
+		const { reservationID } = req.params;
+		if (reservationID === "" || !reservationID) {
+			return res.status(406).json({ msg: "no reservationID param included" });
+		}
+		
+		const allPeople = await database.getAllPeopleInfo(); //List
+		try {
+			person = await helper.findPeopleByReservationID(allPeople, reservationID)
+			return res.status(200).json(person);
+		}
+		catch (e) {
+			console.log(e.message);
+			if (e.message == "Can't find that person from the specific reservationID") {
+				return res.status(204).end();
+			}
+			else return res.status(400).json({ msg: e.message });
+		}
+	})
 
 	/**
 		GET /people/count/total/{date}
