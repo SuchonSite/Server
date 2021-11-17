@@ -229,29 +229,32 @@ describe("PATCH /add", () => {
     })
     
     test("add walk-in when already vacinated", async () => {
-        jest.mock('./peopleInfo.json')
+        jest.mock('./peopleInfo.json', ()=>({
+            data: {
+                    _id: '617548b37bdf1420f00dbb61',
+                    date: '20-10-2021',
+                    people: [
+                        {
+                            name: 'foo', 
+                            surname: 'rockmakmak', 
+                            birth_date: '2002-10-22', 
+                            citizen_id: '1234567848204', 
+                            address: 'bkk thailand'
+                        }
+                    ],
+                    __v: 0
+                }
+          }), { virtual: true })
         // mock the actual data
         const d = require('./peopleInfo.json')
-        // d.mockImplementationOnce(()=> {return {
-        //     _id: '617548b37bdf1420f00dbb61',
-        //     date: '20-10-2021',
-        //     people: [
-        //         {
-        //             name: 'foo', surname: 'rockmakmak', birth_date: '2002-10-22', citizen_id: '1234567848204', address: 'bkk thailand'
-        //         }
-        //     ],
-        //     __v: 0
-        // }})
         const data = d.data
-        
-
-        getPeopleInfoByDate.mockReturnValueOnce(data).mockReturnValueOnce(data)
-        updatePeopleInfo.mockReturnValueOnce().mockReturnValueOnce()
+        getPeopleInfoByDate.mockReturnValueOnce(data)
+        updatePeopleInfo.mockReturnValueOnce()
         const response = await request.patch('/people/add/20-10-2021', { body: {
             name: 'foo', surname: 'rockmakmak', birth_date: '2002-10-22', citizen_id: '1234567848204', address: 'bkk thailand'
         }})
         expect(response.status).toBe(400)
-        // expect(response.body.msg).toBe('kk')
+        expect(response.body.msg).toBe('kk')
     })
 
     test("no date given", async () => {
