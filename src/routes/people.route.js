@@ -128,8 +128,8 @@ function peopleRoutes(database) {
 		
 		const allPeople = await database.getAllPeopleInfo(); //List
 		try {
-			person = await helper.findPeopleByReservationID(allPeople, reservationID)
-			return res.status(200).json(person);
+			let person_with_date = await helper.findPeopleByReservationID(allPeople, reservationID)
+			return res.status(200).json(person_with_date);
 		}
 		catch (e) {
 			console.log(e.message);

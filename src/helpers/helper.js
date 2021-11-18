@@ -280,11 +280,14 @@ function findAvailableTimeSlot(peopleList) {
 
 function findPeopleByReservationID(allPeople, reservationID) {
   let person = null;
+  let date = "";
   for (const peopleEachDay of allPeople) {
     // peopleEachDay is one of object from People Schema
     for (const personInList of peopleEachDay.people) {
       if (personInList.reservation_id.toString() == reservationID.toString()) {
+        date = peopleEachDay.date;
         person = personInList;
+        person["vaccination_date"] = date;
         break;
       }
     }
