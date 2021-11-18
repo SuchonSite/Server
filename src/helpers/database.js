@@ -28,9 +28,11 @@ async function getPeopleInfoByDate(date) {
 }
 
 async function deletePeopleInfo(date) {
-    peopleSchema.findOneAndDelete(date, function (err, docs) {
-        return res.json({})
-    })
+    const peopleByDate = await getPeopleInfoByDate(date);
+    if (peopleByDate) {
+        return peopleSchema.findOneAndDelete(date)
+    }
+    else throw new Error("Can't find the date in the database")
 }
 
 /**
