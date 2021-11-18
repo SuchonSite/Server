@@ -87,22 +87,35 @@ function peopleRoutes(database) {
 		@summary delete people schena by date.
 		@param {string} date.path - date to get that date people
 		@return {object} 200 - Deleted vaccine reservations from that date. - application/json
+		@return {object} 400 - Invalid Date format. - application/json
 		@return {object} 406 - no date param included in request. - application/json
+		@return {object} 503 - Unhandled Error - application/json
 		@example response - 200 - Deleted vaccine reservations from that date.
 		{ "msg": "Deleted vaccine reservations from that date" }
+		@example response - 400 - Invalid Date format
+		{ "msg": "you are using invalid date" }
 		@example response - 406 - no date param included in request.
 		{ "msg": "No date param included in request" }
+		@example response - 503 - Unhandled Err
+		{ "msg": Err message }
 	*/
 	router.delete(["/by_date", "/by_date/:date"], async (req, res) => {
 		// console.log("delete people by date");
 		// console.log(req.params);
 		const { date } = req.params;
+
+		const dateRegex = /^[0-9]{1,2}\-[0-9]{1,2}\-[0-9]{4}$/;
+		if (!dateRegex.test(date)) return res.status(400).json({msg: "you are using invalid date"});
+
 		if (!date) {
 			return res.status(406).json({ msg: "no date param included" });
 		}
-		
-		database.deletePeopleInfo({ date: date });
-		return res.status(200).json({ msg: `Deleted vaccine reservations from ${date}.` });
+		try {
+			await database.deletePeopleInfo({ date: date });
+			return res.status(200).json({ msg: `Deleted vaccine reservations from ${date}.` });
+		} catch(err) { 
+			return res.status(400).json({msg: err.message});
+		}
 	});
 	/**
 	 	GET /people/by_reservationID/{reservationID}
