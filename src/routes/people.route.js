@@ -228,7 +228,7 @@ function peopleRoutes(database) {
 			
 		const peopleData = await database.getPeopleInfoByDate({date: date});
 		// 1. find if the date already exists in db of that date
-		try {
+			try {
 			if (peopleData != null) {
 				// find available time slot
 				let [queue, isAvailable] = helper.findAvailableTimeSlot(peopleData.people);

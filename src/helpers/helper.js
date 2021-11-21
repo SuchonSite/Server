@@ -206,7 +206,6 @@ function addPeopleToList(peopleList, newPersonData, queue) {
   }
   var pplist = peopleList;
   const person = pplist.find((person) => person.citizen_id == citizen_id);
-  // console.log(person);
   if (person) throw new Error("this person already have vaccination!");
   else {
     var m = new Date();

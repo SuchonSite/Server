@@ -5,6 +5,7 @@ const makeApp = require("../app");
 
 const allPeopleInfo = require('./allPeopleInfo.json');
 const byDatePeopleInfo = require('./peopleInfo.json');
+const { AfterAll } = require('@cucumber/cucumber');
 
 const fetchDataToList = jest.fn()
 const connectDB = jest.fn();
@@ -29,9 +30,11 @@ const database = {
 
 const app = makeApp(database, fetcher);
 const request = supertest(app);
+const OLD_ENV = process.env;
 
 beforeEach(() => {
-    jest.resetModules()
+    jest.resetModules() // clears the cache
+    process.env = { ...OLD_ENV }; // make a copy on env
     fetchDataToList.mockReset()
     connectDB.mockReset()
     getAllPeopleInfo.mockReset()
@@ -39,6 +42,10 @@ beforeEach(() => {
     deletePeopleInfo.mockReset()
     updatePeopleInfo.mockReset()
 });
+
+afterAll(() => {
+    process.env = OLD_ENV; // restore old environment
+})
 
 describe("GET /people", () => {
 
@@ -239,22 +246,57 @@ describe("PATCH /add", () => {
                             surname: 'rockmakmak', 
                             birth_date: '2002-10-22', 
                             citizen_id: '1234567848204', 
-                            address: 'bkk thailand'
+                            address: 'bkk thailand',
+                            vaccinated: true,
+                            vac_time: 9
                         }
                     ],
                     __v: 0
                 }
-          }), { virtual: true })
+          }))
         // mock the actual data
         const d = require('./peopleInfo.json')
         const data = d.data
         getPeopleInfoByDate.mockReturnValueOnce(data)
         updatePeopleInfo.mockReturnValueOnce()
-        const response = await request.patch('/people/add/20-10-2021', { body: {
-            name: 'foo', surname: 'rockmakmak', birth_date: '2002-10-22', citizen_id: '1234567848204', address: 'bkk thailand'
-        }})
+        const response = await request.patch('/people/add/20-10-2021').send(
+            {
+                name: 'foo', surname: 'rockmakmak', birth_date: '2002-10-22', citizen_id: '1234567848204', address: 'bkk thailand'
+            }
+        )
         expect(response.status).toBe(400)
-        expect(response.body.msg).toBe('kk')
+        expect(response.body.msg).toBe('this person already have vaccination!')
+    })
+
+    test("add walk-in when quota is full", async () => {
+        // make available quota be 0
+        process.env.PEOPLE_PER_TIMESLOT = 0;
+
+        const d = require('./peopleInfo.json')
+        const data = d.data
+        getPeopleInfoByDate.mockReturnValueOnce(data)
+        updatePeopleInfo.mockReturnValueOnce()
+        const response = await request.patch('/people/add/20-10-2021').send(
+            {
+                name: 'tom', surname: 'basicallyACat', birth_date: '2002-10-22', citizen_id: '1244569848208', address: 'bkk thailand'
+            }
+        )
+        expect(response.status).toBe(304)
+        expect(response.body.msg).toBe('No available timeslot for reservation on 20-10-2021.')
+    })
+
+    test("add walk-in when reservation is unavailable", async () => {
+        const d = require('./peopleInfo.json')
+        const data = d.data
+        getPeopleInfoByDate.mockReturnValueOnce(null)
+        updatePeopleInfo.mockReturnValueOnce()
+        const response = await request.patch('/people/add/20-10-2021').send(
+            {
+                name: 'tom', surname: 'basicallyACat', birth_date: '2002-10-22', citizen_id: '1244569848208', address: 'bkk thailand'
+            }
+        )
+        expect(response.status).toBe(400)
+        expect(response.body.msg).toBe('Vaccine reservation on 20-10-2021 is unavailable.')
     })
 
     test("no date given", async () => {
