@@ -4,6 +4,9 @@ Since COVID-19 pandemic is still going on, having a vaccine seems to be a good i
 
 This application is a part of Software Process & Project Management 01219346 course at [Kasetsart University](https://ku.ac.th/th), written in JavaScript using Express and React.
 
+## Configuration management system
+* [MS sharepoint](https://o365ku.sharepoint.com/sites/suchonsite)
+
 ## Project Documents
 * [User Stories](https://docs.google.com/document/d/15mJUWDTodgeH3xAa-sm5pXQ5PwcVSdjU-OOOIoB69EA/edit)
 * [API Documentation](../../wiki/API)

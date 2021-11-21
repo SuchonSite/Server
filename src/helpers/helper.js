@@ -277,6 +277,27 @@ function findAvailableTimeSlot(peopleList) {
   return [newqueue, isAvailable];
 }
 
+function findPeopleByReservationID(allPeople, reservationID) {
+  let person = null;
+  let date = "";
+  for (const peopleEachDay of allPeople) {
+    // peopleEachDay is one of object from People Schema
+    for (const personInList of peopleEachDay.people) {
+      if (personInList.reservation_id.toString() == reservationID.toString()) {
+        date = peopleEachDay.date;
+        person = personInList;
+        person["vaccination_date"] = date;
+        break;
+      }
+    }
+  }
+
+  if (person === null) {
+    throw new Error("Can't find that person from the specific reservationID");
+  }
+  else return person;
+}
+
 module.exports = {
   calcAge,
   toSlashDate,
@@ -290,4 +311,5 @@ module.exports = {
   vaccinePeople,
   addPeopleToList,
   findAvailableTimeSlot,
+  findPeopleByReservationID,
 };
