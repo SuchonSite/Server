@@ -49,6 +49,11 @@ afterAll(() => {
 
 describe("GET /people", () => {
 
+    /**
+     * Test Case ID: P1
+     * Given all people information data
+     * GET /people/all must response with all of the people information data
+     */
     test("get all people info", async () => {
         const data = allPeopleInfo.data
         getAllPeopleInfo.mockReturnValueOnce(data)
@@ -59,6 +64,11 @@ describe("GET /people", () => {
         expect(response.body[0].date).toEqual(expect.any(String))
     })
 
+    /**
+     * Test Case ID: P2
+     * Given people information data
+     * GET /people/by_date/20-10-2021 must response with the people information data of date 20-10-2021
+     */
     test("get people info on specific date", async () => {
         const data = byDatePeopleInfo.data
         getPeopleInfoByDate.mockReturnValueOnce(data)
@@ -69,6 +79,12 @@ describe("GET /people", () => {
         expect(response.body.people).toEqual(expect.any(Array))
     })
 
+    /**
+     * Test Case ID: P3
+     * Given people information data
+     * GET /people/by_date/20-10-2021 must response with the people information data of date 20-10-2021
+     * in the correct structure
+     */
     test("test people info structure", async () => {
         const data = byDatePeopleInfo.data
         getPeopleInfoByDate.mockReturnValueOnce(data)
@@ -88,6 +104,11 @@ describe("GET /people", () => {
         expect(peopleData.vac_time).toEqual(expect.any(Number))
     })
 
+    /**
+     * Test Case ID: P4
+     * Given people information data
+     * GET /people/by_date/ must response with status 406
+     */
     test("no date given", async () => {
         const response = await request.get('/people/by_date')
         expect(response.status).toBe(406)
@@ -96,6 +117,11 @@ describe("GET /people", () => {
 
 describe("DELETE /people", () => {
 
+    /**
+     * Test Case ID: P5
+     * Given people information data
+     * DELETE /people/by_date/20-10-2021 must delete reservation of date 20-10-2021
+     */
     test("delete people info on specific date", async () => {
         deletePeopleInfo.mockReturnValueOnce()
         const response = await request.delete('/people/by_date/20-10-2021')
@@ -103,12 +129,22 @@ describe("DELETE /people", () => {
         expect(response.body.msg).toBe("Deleted vaccine reservations from 20-10-2021.")
     })
 
+    /**
+     * Test Case ID: P6
+     * Given people information data
+     * DELETE /people/by_date/20-OCT-2021 must response with status 400
+     */
     test("invalid date format", async () => {
         const response = await request.delete('/people/by_date/20-OCT-2021')
         expect(response.status).toBe(400)
         expect(response.body.msg).toBe("you are using invalid date")
     })
 
+    /**
+     * Test Case ID: P7
+     * Given people information data
+     * DELETE /people/by_date/ must response with status 406
+     */
     test("no date given", async () => {
         const response = await request.delete('/people/by_date/')
         expect(response.status).toBe(406)
@@ -118,6 +154,12 @@ describe("DELETE /people", () => {
 
 describe("GET /count", () => {
 
+    /**
+     * Test Case ID: P8
+     * Given people information data
+     * GET /people/count/total/20-10-2021 must give a number of people
+     * total count, waiting and vaccinated
+     */
     test("count people in day", async () => {
         const data = byDatePeopleInfo.data
         getPeopleInfoByDate.mockReturnValueOnce(data)
@@ -129,11 +171,21 @@ describe("GET /count", () => {
         expect(response.body.vaccinated).toEqual(expect.any(Number))
     })
 
+    /**
+     * Test Case ID: P9
+     * Given people information data
+     * GET /people/count/total/ must response with status 406
+     */
     test("no date given", async () => {
         const response = await request.get('/people/count/total')
         expect(response.status).toBe(406)
     })
 
+    /**
+     * Test Case ID: P10
+     * Given people information data
+     * GET /people/count/walkin/20-10-2021 must give a number of total walk-in people
+     */
     test("count people in day", async () => {
         const data = byDatePeopleInfo.data
         getPeopleInfoByDate.mockReturnValueOnce(data)
@@ -143,6 +195,11 @@ describe("GET /count", () => {
         expect(response.body.total_walkin).toEqual(expect.any(Number))
     })
 
+    /**
+     * Test Case ID: P11
+     * Given people information data
+     * GET /people/count/walkin must response with status 406
+     */
     test("no date given", async () => {
         const response = await request.get('/people/count/walkin')
         expect(response.status).toBe(406)
@@ -151,6 +208,11 @@ describe("GET /count", () => {
 
 describe("PATCH /cancel", () => {
 
+    /**
+     * Test Case ID: P12
+     * Given people information data
+     * PATCH /people/cancel/20-10-2021/10 must cancel the reservation of given date and ID
+     */
     test("cancel reservation", async () => {
         const data = byDatePeopleInfo.data
 
@@ -161,6 +223,11 @@ describe("PATCH /cancel", () => {
         expect(response.body.msg).toBe('Removed reservationID 10 on 20-10-2021 successful')
     })
 
+    /**
+     * Test Case ID: P13
+     * Given people information data
+     * PATCH /people/cancel/ must response with status 406
+     */
     test("no date given", async () => {
         updatePeopleInfo.mockReturnValueOnce()
         const response = await request.patch('/people/cancel/')
@@ -168,6 +235,11 @@ describe("PATCH /cancel", () => {
         expect(response.body.msg).toBe('no date or reservationID params included')
     })
 
+    /**
+     * Test Case ID: P14
+     * Given people information data
+     * PATCH /people/cancel/10 must response with status 406
+     */
     test("given reservationID but no date given", async () => {
         updatePeopleInfo.mockReturnValueOnce()
         const response = await request.patch('/people/cancel/10')
@@ -175,6 +247,11 @@ describe("PATCH /cancel", () => {
         expect(response.body.msg).toBe('no date or reservationID params included')
     })
 
+    /**
+     * Test Case ID: P15
+     * Given people information data
+     * PATCH /people/cancel/20-10-2021/ must response with status 406
+     */
     test("no reservationID given", async () => {
         updatePeopleInfo.mockReturnValueOnce()
         const response = await request.patch('/people/cancel/20-10-2021/')
@@ -185,6 +262,11 @@ describe("PATCH /cancel", () => {
 
 describe("PATCH /vaccinated", () => {
 
+    /**
+     * Test Case ID: P16
+     * Given people information data
+     * PATCH /people/vaccinated/20-10-2021/10 must update people information of given ID to vaccinated
+     */
     test("vaccinated", async () => {
         const data = byDatePeopleInfo.data
 
@@ -195,6 +277,11 @@ describe("PATCH /vaccinated", () => {
         expect(response.body.msg).toBe('Vaccination reservationID : 10 on 20-10-2021 successful')
     })
     
+    /**
+     * Test Case ID: P17
+     * Given people information data
+     * PATCH /people/vaccinated/ must response with status 406
+     */
     test("no date given", async () => {
         updatePeopleInfo.mockReturnValueOnce()
         const response = await request.patch('/people/vaccinated/')
@@ -202,6 +289,11 @@ describe("PATCH /vaccinated", () => {
         expect(response.body.msg).toBe('no date or reservationID params included')
     })
 
+    /**
+     * Test Case ID: P18
+     * Given people information data
+     * PATCH /people/vaccinated/10 must response with status 406
+     */
     test("given reservationID but no date given", async () => {
         updatePeopleInfo.mockReturnValueOnce()
         const response = await request.patch('/people/vaccinated/10')
@@ -209,6 +301,11 @@ describe("PATCH /vaccinated", () => {
         expect(response.body.msg).toBe('no date or reservationID params included')
     })
 
+    /**
+     * Test Case ID: P19
+     * Given people information data
+     * PATCH /people/vaccinated/10 must response with status 406
+     */
     test("no reservationID given", async () => {
         updatePeopleInfo.mockReturnValueOnce()
         const response = await request.patch('/people/vaccinated/20-10-2021/')
@@ -220,6 +317,11 @@ describe("PATCH /vaccinated", () => {
 
 describe("PATCH /add", () => {
 
+    /**
+     * Test Case ID: P20
+     * Given people information data
+     * PATCH /people/add/20-10-2021 must add walk-in people data in to database
+     */
     test("add walk-in", async () => {
         jest.mock('./peopleInfo.json')
         // mock the actual data
@@ -235,6 +337,11 @@ describe("PATCH /add", () => {
         expect(response.body.msg).toBe('Vaccine reservation on 20-10-2021 successful!')
     })
 
+    /**
+     * Test Case ID: P21
+     * Given people information data but vaccination is unavailable
+     * PATCH /people/add/20-10-2021 must response with status 400
+     */
     test("add walk-in when unavailable", async () => {
         getPeopleInfoByDate.mockReturnValueOnce() // no data available
         updatePeopleInfo.mockReturnValueOnce()
@@ -242,7 +349,12 @@ describe("PATCH /add", () => {
         expect(response.status).toBe(400)
         expect(response.body.msg).toBe('Vaccine reservation on 20-10-2021 is unavailable.')
     })
-    
+
+    /**
+     * Test Case ID: P22
+     * Given people information data but poeple is already vaccinated
+     * PATCH /people/add/20-10-2021 must response with status 400
+     */
     test("add walk-in when already vacinated", async () => {
         jest.mock('./peopleInfo.json', ()=>({
             data: {
@@ -276,6 +388,11 @@ describe("PATCH /add", () => {
         expect(response.body.msg).toBe('this person already have vaccination!')
     })
 
+    /**
+     * Test Case ID: P23
+     * Given people information data but quota is full
+     * PATCH /people/add/20-10-2021 must response with status 304
+     */
     test("add walk-in when quota is full", async () => {
         // make available quota be 0
         process.env.PEOPLE_PER_TIMESLOT = 0;
@@ -293,9 +410,12 @@ describe("PATCH /add", () => {
         expect(response.body.msg).toBe('No available timeslot for reservation on 20-10-2021.')
     })
 
+    /**
+     * Test Case ID: P24
+     * Given people information data but reservation is unavailable
+     * PATCH /people/add/20-10-2021 must response with status 400
+     */
     test("add walk-in when reservation is unavailable", async () => {
-        const d = require('./peopleInfo.json')
-        const data = d.data
         getPeopleInfoByDate.mockReturnValueOnce(null)
         updatePeopleInfo.mockReturnValueOnce()
         const response = await request.patch('/people/add/20-10-2021').send(
@@ -307,6 +427,11 @@ describe("PATCH /add", () => {
         expect(response.body.msg).toBe('Vaccine reservation on 20-10-2021 is unavailable.')
     })
 
+    /**
+     * Test Case ID: P25
+     * Given people information
+     * PATCH /people/vaccinated/ must response with status 406
+     */
     test("no date given", async () => {
         updatePeopleInfo.mockReturnValueOnce()
         const response = await request.patch('/people/vaccinated/')
