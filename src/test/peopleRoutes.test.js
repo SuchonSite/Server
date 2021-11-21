@@ -100,11 +100,19 @@ describe("DELETE /people", () => {
         deletePeopleInfo.mockReturnValueOnce()
         const response = await request.delete('/people/by_date/20-10-2021')
         expect(response.status).toBe(200)
+        expect(response.body.msg).toBe("Deleted vaccine reservations from 20-10-2021.")
+    })
+
+    test("invalid date format", async () => {
+        const response = await request.delete('/people/by_date/20-OCT-2021')
+        expect(response.status).toBe(400)
+        expect(response.body.msg).toBe("you are using invalid date")
     })
 
     test("no date given", async () => {
-        const response = await request.delete('/people/by_date')
+        const response = await request.delete('/people/by_date/')
         expect(response.status).toBe(406)
+        expect(response.body.msg).toBe("no date param included")
     })
 })
 
