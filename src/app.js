@@ -4,7 +4,7 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 
-function makeApp(database, fetcher){
+function makeApp(database, gov){
 
   const express = require("express"),
   cors = require("cors"),
@@ -39,7 +39,7 @@ function makeApp(database, fetcher){
   })
 
   // app.use(cors());
-  app.use("/",getDataFromGov(database, fetcher))
+  app.use("/",getDataFromGov(database, gov))
   app.use("/people", peopleRoutes(database));
 
   return app

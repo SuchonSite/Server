@@ -3,10 +3,10 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 const database = require("./helpers/database")
-const fetcher = require("./helpers/fetcher")
+const gov = require("./helpers/gov")
 
 const makeApp = require("./app");
-const app = makeApp(database, fetcher);
+const app = makeApp(database, gov);
 
 const expressJSDocSwagger = require('express-jsdoc-swagger');
 const options = {

@@ -1,7 +1,8 @@
 function peopleRoutes(database) {
 	const express = require("express"),
 		router = express.Router(),
-		helper = require("../helpers/helper");
+		helper = require("../helpers/helper"),
+		gov = require("../helpers/gov");
 
 	/**
 	 * New person
@@ -242,6 +243,18 @@ function peopleRoutes(database) {
 			.status(406)
 			.json({ msg: "no date or reservationID params included" });
 		}
+		let govEndpoint = process.env.GOV_ENDPOINT;
+		let cancelReservationURL = govEndpoint + "reservation/" + reservationID;
+
+		//send delete request to gov
+		const canceltToGov = gov.cancelVaccination(cancelReservationURL)
+		canceltToGov.then((data)=>{
+			console.log(data);
+		}).catch ((e) => {
+			return res.status(304).json({msg: e.message});
+		});
+
+		
 		const peopleData = await database.getPeopleInfoByDate({ date: date });
 
 		try {
@@ -296,6 +309,17 @@ function peopleRoutes(database) {
 			.status(406)
 			.json({ msg: "no date or reservationID params included" });
 		}
+		let govEndpoint = process.env.GOV_ENDPOINT;
+		let vaccinatedToGovURL = govEndpoint + "reservation/report-taken/" + reservationID;
+
+		//send put request to gov
+		const resultToGov = gov.completeVaccination(vaccinatedToGovURL)
+		resultToGov.then((data)=>{
+			console.log(data);
+		}).catch ((e) => {
+			return res.status(304).json({msg: e.message});
+		});
+
 		const peopleData = await database.getPeopleInfoByDate({ date: date });
 
 		try {

@@ -1,4 +1,4 @@
-function getDataFromGov(database, fetcher) {
+function getDataFromGov(database, gov) {
 
     const express = require('express'),
         router = express.Router();
@@ -23,7 +23,7 @@ function getDataFromGov(database, fetcher) {
         let getDataFromGovUrl = govEndpoint + "reservation/" + slashDate // reservation/YYYY/MM/DD
         let peopleList = []
         // fetch using fetch method from helpers
-        let dataFromGov = fetcher.fetchDataToList(getDataFromGovUrl)
+        let dataFromGov = gov.fetchDataToList(getDataFromGovUrl)
         dataFromGov.then((data) => {
             peopleList = data;
         }).catch((e)=> {
