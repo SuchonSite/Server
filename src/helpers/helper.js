@@ -85,7 +85,6 @@ function setPriorityPerson(person) {
 //how to arrange queue?
 // - Users who have high priority will get a vaccine first. (FINISHED)
 // - On the other hand, users who have the same priority will be assigned a queue based on timestamp. (FINISHED from Gov)
-
 function arrangeQueuePeopleList(peopleList) {
   let arrangedPeopleList = {
     1: [],
@@ -233,15 +232,15 @@ function addPeopleToList(peopleList, newPersonData, queue) {
         break;
       }
     }
-
+    let ts = + new Date()
     let np = {
-      reservation_id: 0,
+      reservation_id: ts,
       register_timestamp: dateString,
       name: name,
       surname: surname,
       birth_date: birth_date,
       citizen_id: citizen_id,
-      occupation: "",
+      occupation: "walk-in",
       address: address,
       priority: "3",
       vaccinated: false,
