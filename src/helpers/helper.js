@@ -160,7 +160,7 @@ function findNextPersonQueue(peopleList) {
   let hours = d.getHours();
   for (let person of peopleList) {
     if (person.vaccinated == false) {
-      if (person.vac_time >= hours && (process.env.GOVERNMENT_OPEN <= person.vac_time && hours <= process.env.GOVERNMENT_CLOSE)) return person;
+      if (person.vac_time >= hours && (process.env.GOVERNMENT_OPEN <= hours && hours <= process.env.GOVERNMENT_CLOSE)) return person;
     }
   }
   return null;
