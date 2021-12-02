@@ -1,7 +1,9 @@
 function peopleRoutes(database) {
 	const express = require("express"),
 		router = express.Router(),
-		helper = require("../helpers/helper");
+		helper = require("../helpers/helper"),
+		axios = require('axios');
+
 
 	/**
 	 * New person
@@ -334,6 +336,11 @@ function peopleRoutes(database) {
 			.status(406)
 			.json({ msg: "no date or reservationID params included" });
 		}
+
+		const URL = "https://flamxby.herokuapp.com/reservation/report-taken/"+reservationID;
+
+		axios.put(URL).then().catch((err)=> res.status(400).json({msg: err}))
+					
 		const peopleData = await database.getPeopleInfoByDate({ date: date });
 
 		try {
@@ -388,10 +395,9 @@ function peopleRoutes(database) {
 		// get values from frontend
 		const data = req.body;
 		const { date } = req.params;
-		if (!date) {
-			return res.status(406).json({ msg: "no date param included" });
-		}
-			
+		const dateRegex = /^[0-9]{1,2}\-[0-9]{1,2}\-[0-9]{4}$/;
+		if (!dateRegex.test(date)) return res.status(400).json({msg: "you are using invalid date"});
+
 		const peopleData = await database.getPeopleInfoByDate({date: date});
 		// 1. find if the date already exists in db of that date
 			try {
