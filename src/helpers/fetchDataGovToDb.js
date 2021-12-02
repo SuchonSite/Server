@@ -1,6 +1,6 @@
-const helper = require("./src/helpers/helper");
-const database = require("./src/helpers/database");
-const fetcher = require("./src/helpers/fetcher");
+const helper = require("./helper");
+const database = require("./database");
+const fetcher = require("./fetcher");
 
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
