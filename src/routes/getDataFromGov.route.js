@@ -6,12 +6,15 @@ function getDataFromGov(database, fetcher) {
     const helper = require('../helpers/helper')
 
     router.post('/getDataFromGov/:date', async (req, res) => {
-
         // param date
         console.log("get data from gov (by date)")
         const date = req.params.date; // DD-MM-YYYY
+
+        const dateRegex = /^[0-9]{2}\-[0-9]{2}\-[0-9]{4}$/;
+        if (!dateRegex.test(date)) return res.status(400).json({msg: "you are using invalid date format"});
+
         const slashDate = helper.toSlashDate(date) // to YYYY/MM/DD
-        
+
         // check if db dont have this date
         const people = await database.getPeopleInfoByDate({ "date": date })
         if (people != null) {

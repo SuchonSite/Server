@@ -117,6 +117,44 @@ function peopleRoutes(database) {
 			return res.status(400).json({msg: err.message});
 		}
 	});
+
+	/**
+	 	
+	 */
+	router.get("/by_date/queue/:date", async (req, res) => {
+		const { date } = req.params;
+		const dateRegex = /^[0-9]{1,2}\-[0-9]{1,2}\-[0-9]{4}$/;
+		if (!dateRegex.test(date)) return res.status(400).json({msg: "you are using invalid date"});
+
+		const people = await database.getPeopleInfoByDate({
+			date: date
+		});
+		if (people === null) return res.status(204).end();
+		const peopleList = people.people;
+		const findUnVaccinatePeopleList = helper.findUnVaccinatePeopleList(peopleList);
+
+		return res.json(findUnVaccinatePeopleList);
+	});
+
+	/**
+	 	
+	 */
+	router.get("/by_date/queue/current/:date", async (req, res) => {
+		const { date } = req.params;
+		const dateRegex = /^[0-9]{1,2}\-[0-9]{1,2}\-[0-9]{4}$/;
+		if (!dateRegex.test(date)) return res.status(400).json({msg: "you are using invalid date"});
+
+		const people = await database.getPeopleInfoByDate({
+			date: date
+		});
+		if (people === null) return res.status(204).end();
+		const peopleList = people.people;
+		const findUnVaccinatePeopleList = helper.findNextPersonQueue(peopleList);
+
+		return res.json(findUnVaccinatePeopleList);
+	});
+
+
 	/**
 	 	GET /people/by_reservationID/{reservationID}
 		 @summary get person by reservationID

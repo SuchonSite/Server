@@ -144,6 +144,28 @@ function assignPeopleListInTimeslots(peopleList) {
   return assignedTimePeopleList;
 }
 
+function findUnVaccinatePeopleList(peopleList) {
+  let unVaccinate = [];
+  //set priority people in people list
+  for (let person of peopleList) {
+    if (person.vaccinated == false) {
+      unVaccinate.push(person);
+    }
+  }
+  return unVaccinate;
+}
+
+function findNextPersonQueue(peopleList) {
+  const d = new Date;
+  let hours = d.getHours();
+  for (let person of peopleList) {
+    if (person.vaccinated == false) {
+      if (person.vac_time >= hours && (process.env.GOVERNMENT_OPEN <= person.vac_time && hours <= process.env.GOVERNMENT_CLOSE)) return person;
+    }
+  }
+  return null;
+}
+
 function countPeople(peopleData) {
   if (peopleData == null) {
     return { count: 0, waiting: 0, vaccined: 0 };
@@ -311,4 +333,6 @@ module.exports = {
   addPeopleToList,
   findAvailableTimeSlot,
   findPeopleByReservationID,
+  findUnVaccinatePeopleList,
+  findNextPersonQueue
 };
