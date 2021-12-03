@@ -185,8 +185,9 @@ function peopleRoutes(database) {
 		if (people === null) return res.status(204).end();
 		const peopleList = people.people;
 		const findUnVaccinatePeopleList = helper.findNextPersonQueue(peopleList);
-
-		return res.json(findUnVaccinatePeopleList);
+		
+		if (findUnVaccinatePeopleList) return res.json(findUnVaccinatePeopleList);         
+		return res.json({reservation_id : "-"});
 	});
 
 
