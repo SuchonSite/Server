@@ -15,10 +15,8 @@ async function fetchDataGovToDb(date) {
   // fetch from gov
   let govEndpoint = process.env.GOV_ENDPOINT;
   let getDataFromGovUrl = govEndpoint + "reservation/" + slashDate; // reservation/YYYY/MM/DD
-  let peopleList = [];
 
-  let dataFromGov = await fetcher.fetchDataToList(getDataFromGovUrl);
-  peopleList = dataFromGov;
+  let peopleList = await fetcher.fetchDataToList(getDataFromGovUrl);
 
   // compare and modify result
   let newPeopleList = helper.modifyPeopleList(peopleList);

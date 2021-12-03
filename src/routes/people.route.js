@@ -273,9 +273,10 @@ function peopleRoutes(database) {
 	});
 
 	/**
-		PATCH /people/cancel/:date/{reservationID}
+		PATCH /people/cancel/{date}/{reservationID}
 		@summary cancel people in peopleList in people schema by date and reservationID.
 		@param {string} reservationID.path - reservationID to get that person
+		@param {string} date.path - date to get that person
 		@return {object} 200 - Removed the reservationID on that date successful
 		@return {object} 304 - Remove the reservationID on that date unsuccessful
 		@return {object} 406 - No date or reservationID params included in request.
@@ -325,9 +326,10 @@ function peopleRoutes(database) {
 	});
 
 	/**
-		PATCH /people/vaccinated/:date/{reservationID}
+		PATCH /people/vaccinated/{date}/{reservationID}
 		@summary vaccinate people in peopleList in people schema by date and reservationID.
 		@param {string} reservationID.path - reservationID to get that person
+		@param {string} date.path - date to get that person
 		@return {object} 200 - Vaccination the reservationID on that date successful
 		@return {object} 304 - Vaccination the reservationID on that date unsuccessful
 		@return {object} 400 - Err

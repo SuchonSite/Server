@@ -3,7 +3,7 @@ const fetcher = require("./helpers/fetchDataGovToDb");
 
 let d = new Date();
 let day_ahead = process.env.FETCH_AHEAD;
-d.setDate(d.getDate() + day_ahead);
+d.setDate(d.getDate() + parseInt(day_ahead));
 let year = d.getFullYear();
 let day = d.getDay();
 let month = d.getMonth();
