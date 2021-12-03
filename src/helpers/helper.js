@@ -59,10 +59,13 @@ function toSlashDate(date) {
 }
 
 function modifyPeopleList(jsonPeopleList) {
+  console.log(jsonPeopleList)
   let newPeopleList = [];
   for (const person of jsonPeopleList) {
+    // console.log(person)
     let thisPerson = convertGovJson(person);
     newPeopleList.push(thisPerson);
+    // console.log(thisPerson)
   }
   return newPeopleList;
 }

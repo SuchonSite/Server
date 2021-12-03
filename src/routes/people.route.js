@@ -32,6 +32,22 @@ function peopleRoutes(database) {
 	 */
 
 	/**
+	 * Personres
+	 * @typedef {object} Personres
+	 * @property {integer} reservation_id - name
+	 * @property {string} register_timestamp - surname
+	 * @property {string} name - birth_date
+	 * @property {string} surname - citizen_id
+	 * @property {string} birth_date - address
+	 * @property {string} citizen_id - name
+	 * @property {string} occupation - surname
+	 * @property {string} address - birth_date
+	 * @property {string} priority - citizen_id
+	 * @property {boolean} vaccinated - address
+	 * @property {date} vaccination_date - date
+	 */
+
+	/**
 	 * People
 	 * @typedef {object} People
 	 * @property {string} _id - _id
@@ -161,7 +177,7 @@ function peopleRoutes(database) {
 	 	GET /people/by_reservationID/{reservationID}
 		 @summary get person by reservationID
 		 @param {string} reservationID.path - reservationID to get that person information
-		 @return {Person} 200 - Success response - application/json
+		 @return {Personres} 200 - Success response - application/json
 		 @return {object} 204 - Can't find that person from the specific reservationID
 		 @return {object} 400 - Err - application/json
 		 @return {object} 406 - No reservationId included in request - application/json

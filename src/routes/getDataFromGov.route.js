@@ -24,18 +24,12 @@ function getDataFromGov(database, fetcher) {
         // fetch from gov
         let govEndpoint = process.env.GOV_ENDPOINT
         let getDataFromGovUrl = govEndpoint + "reservation/" + slashDate // reservation/YYYY/MM/DD
-        let peopleList = []
+        // let peopleList = []
         // fetch using fetch method from helpers
-        let dataFromGov = fetcher.fetchDataToList(getDataFromGovUrl)
-        dataFromGov.then((data) => {
-            peopleList = data;
-        }).catch((e)=> {
-            if (e.message == "gov status code != 200") res.status(504).json({"msg": "gov status code != 200"});
-            else return res.status(504).json({"msg": "fetch gov data failed"});
-        })
-        
+        let peopleList = await fetcher.fetchDataToList(getDataFromGovUrl)
         // compare and modify result
         let newPeopleList = helper.modifyPeopleList(peopleList)
+        console.log(newPeopleList);
         // arrange queue based on priority and timestamp
         let peopleQueueList = helper.arrangeQueuePeopleList(newPeopleList)
         // assign vaccination time
