@@ -122,7 +122,7 @@ function assignPeopleListInTimeslots(peopleList) {
   const peoplePerTimeslot = process.env.PEOPLE_PER_TIMESLOT;
 
   //start vaccination when government open
-  let vac_time = process.env.GOVERNMENT_OPEN;
+  let vac_time = parseInt(process.env.GOVERNMENT_OPEN);
 
   let assignedTimePeopleList = [];
 
@@ -132,10 +132,10 @@ function assignPeopleListInTimeslots(peopleList) {
       //re availible vacciantgion slot of current timeslot
       avaliableCurrentSlot = peoplePerTimeslot;
 
-      if (vac_time == process.env.GOVERNMENT_CLOSE) {
+      if (vac_time == parseInt(process.env.GOVERNMENT_CLOSE)) {
         throw new Error("Not enough timeslot for all vaccination");
       } else {
-        vac_time += process.env.VACCINATION_TIME;
+        vac_time += parseInt(process.env.VACCINATION_TIME);
       }
     }
     newPerson = { ...person, vac_time: vac_time };
@@ -287,7 +287,7 @@ function findAvailableTimeSlot(peopleList) {
   }
   // Set for each time slot
   for (let person of peopleList){
-    queue[person.vac_time.toString()] = (queue[person.vac_time.toString()].parseInt() + 1).toString;
+    queue[person.vac_time.toString()] += 1;
   }
   
   // Available queue
