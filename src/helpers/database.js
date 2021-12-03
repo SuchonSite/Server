@@ -52,7 +52,6 @@ async function dbStorePeople(date, peopleList){
     }
     try {
         peopleSchema.create(storeData, (error, da) => {
-            console.log("date added")
         })
         return true
     }
