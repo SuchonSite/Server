@@ -44,7 +44,7 @@ function peopleRoutes(database) {
 	 * @property {string} address - birth_date
 	 * @property {string} priority - citizen_id
 	 * @property {boolean} vaccinated - address
-	 * @property {date} vaccination_date - date
+	 * @property {string} vaccination_date - date
 	 */
 
 	/**
