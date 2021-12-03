@@ -17,6 +17,7 @@
     "express": "^4.17.1",
     "express-jsdoc-swagger": "^1.6.7",
     "mongoose": "^6.0.9",
+    "node-cron": "^3.0.0",
     "supertest": "^6.1.6",
     "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.1.6"
