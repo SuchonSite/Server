@@ -171,7 +171,7 @@ function findNextPersonQueue(peopleList) {
 
 function countPeople(peopleData) {
   if (peopleData == null) {
-    return { count: 0, waiting: 0, vaccined: 0 };
+    return { count: 0, waiting: 0, vaccinated: 0 };
   }
   let count = 0,
     waiting = 0,
