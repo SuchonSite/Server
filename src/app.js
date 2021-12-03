@@ -9,7 +9,7 @@ function makeApp(database, fetcher){
   const express = require("express"),
   cors = require("cors"),
   bodyParser = require("body-parser"),
-  // schedule = require("./cron-job"),
+  schedule = require("./cron-job"),
   peopleRoutes = require("./routes/people.route"),
   getGov = require("./routes/getDataFromGov.route")
 

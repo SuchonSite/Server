@@ -5,7 +5,7 @@ let d = new Date();
 let day_ahead = process.env.FETCH_AHEAD;
 d.setDate(d.getDate() + parseInt(day_ahead));
 let year = d.getFullYear();
-let day = d.getDay();
+let day = d.getDate();
 let month = d.getMonth();
 
 let hour = process.env.FETCH_HOUR;

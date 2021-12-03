@@ -10,11 +10,17 @@ async function fetchDataGovToDb(date) {
   const dateRegex = /^[0-9]{2}\-[0-9]{2}\-[0-9]{4}$/;
   if (!dateRegex.test(date)) console.log("you are using invalid date format");
 
+  console.log(date)
+
   const slashDate = helper.toSlashDate(date); // to YYYY/MM/DD
+
+  console.log(slashDate)
 
   // fetch from gov
   let govEndpoint = process.env.GOV_ENDPOINT;
   let getDataFromGovUrl = govEndpoint + "reservation/" + slashDate; // reservation/YYYY/MM/DD
+
+  console.log(getDataFromGovUrl);
 
   let peopleList = await fetcher.fetchDataToList(getDataFromGovUrl);
 
