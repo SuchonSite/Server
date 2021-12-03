@@ -33,6 +33,7 @@ function convertGovJson(thisJson) {
   let newJson = {
     reservation_id: thisJson["reservation_id"],
     register_timestamp: thisJson["register_timestamp"],
+    vaccinated: thisJson["vaccinated"],
     ...thisJson["owner"],
   };
   return newJson;
@@ -286,7 +287,7 @@ function findAvailableTimeSlot(peopleList) {
   }
   // Set for each time slot
   for (let person of peopleList){
-    queue[person.vac_time.toString()] += 1;
+    queue[person.vac_time.toString()] = (queue[person.vac_time.toString()].parseInt() + 1).toString;
   }
   
   // Available queue

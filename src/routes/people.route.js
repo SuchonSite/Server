@@ -137,8 +137,16 @@ function peopleRoutes(database) {
 	});
 
 	/**
-	 	
-	 */
+		GET /people/by_date/{date}
+		@summary get all people schema in a specific date
+		@param {string} date.path - Date to get that date people
+		@return {People} 200 - Success response - application/json
+		@return {object} 204
+		@return {object} 400 - Invalid date param - application/json
+		@example response - 200 - Success response
+		@example response - 400 - Invalid date param
+		{ "msg": "you are using invalid date" }
+	*/
 	router.get("/by_date/queue/:date", async (req, res) => {
 		const { date } = req.params;
 		const dateRegex = /^[0-9]{1,2}\-[0-9]{1,2}\-[0-9]{4}$/;
@@ -156,8 +164,16 @@ function peopleRoutes(database) {
 	});
 
 	/**
-	 	
-	 */
+		GET /people/by_date/{date}
+		@summary get all people schema in a specific date
+		@param {string} date.path - Date to get that date people
+		@return {Person} 200 - Success response - application/json
+		@return {object} 204
+		@return {object} 400 - Invalid date param - application/json
+		@example response - 200 - Success response
+		@example response - 400 - Invalid date param
+		{ "msg": "you are using invalid date" }
+	*/
 	router.get("/by_date/queue/current/:date", async (req, res) => {
 		const { date } = req.params;
 		const dateRegex = /^[0-9]{1,2}\-[0-9]{1,2}\-[0-9]{4}$/;
@@ -357,9 +373,11 @@ function peopleRoutes(database) {
 		}
 
 		const URL = "https://flamxby.herokuapp.com/reservation/report-taken/"+reservationID;
-
-		const sentToGov = await axios.put(URL);
-
+		try {
+			const sentToGov = await axios.put(URL);
+		} catch (e) {
+			console.log("Can't find that reservationId from gov");
+		}
 					
 		const peopleData = await database.getPeopleInfoByDate({ date: date });
 
