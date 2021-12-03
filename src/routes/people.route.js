@@ -1,7 +1,9 @@
 function peopleRoutes(database) {
 	const express = require("express"),
 		router = express.Router(),
-		helper = require("../helpers/helper");
+		helper = require("../helpers/helper"),
+		axios = require('axios');
+
 
 	/**
 	 * New person
@@ -27,6 +29,22 @@ function peopleRoutes(database) {
 	 * @property {string} priority - citizen_id
 	 * @property {boolean} vaccinated - address
 	 * @property {integer} vac_time - address
+	 */
+
+	/**
+	 * Personres
+	 * @typedef {object} Personres
+	 * @property {integer} reservation_id - name
+	 * @property {string} register_timestamp - surname
+	 * @property {string} name - birth_date
+	 * @property {string} surname - citizen_id
+	 * @property {string} birth_date - address
+	 * @property {string} citizen_id - name
+	 * @property {string} occupation - surname
+	 * @property {string} address - birth_date
+	 * @property {string} priority - citizen_id
+	 * @property {boolean} vaccinated - address
+	 * @property {string} vaccination_date - date
 	 */
 
 	/**
@@ -117,11 +135,67 @@ function peopleRoutes(database) {
 			return res.status(400).json({msg: err.message});
 		}
 	});
+
+	/**
+		GET /people/by_date/{date}
+		@summary get all people schema in a specific date
+		@param {string} date.path - Date to get that date people
+		@return {People} 200 - Success response - application/json
+		@return {object} 204
+		@return {object} 400 - Invalid date param - application/json
+		@example response - 200 - Success response
+		@example response - 400 - Invalid date param
+		{ "msg": "you are using invalid date" }
+	*/
+	router.get("/by_date/queue/:date", async (req, res) => {
+		const { date } = req.params;
+		const dateRegex = /^[0-9]{1,2}\-[0-9]{1,2}\-[0-9]{4}$/;
+		if (!dateRegex.test(date)) return res.status(400).json({msg: "you are using invalid date"});
+
+		const people = await database.getPeopleInfoByDate({
+			date: date
+		});
+		if (people === null) return res.status(204).end();
+		const peopleList = people.people;
+		const findUnVaccinatePeopleList = helper.findUnVaccinatePeopleList(peopleList);
+
+		const result = {date: date, people:findUnVaccinatePeopleList}
+		return res.json(result);
+	});
+
+	/**
+		GET /people/by_date/{date}
+		@summary get all people schema in a specific date
+		@param {string} date.path - Date to get that date people
+		@return {Person} 200 - Success response - application/json
+		@return {object} 204
+		@return {object} 400 - Invalid date param - application/json
+		@example response - 200 - Success response
+		@example response - 400 - Invalid date param
+		{ "msg": "you are using invalid date" }
+	*/
+	router.get("/by_date/queue/current/:date", async (req, res) => {
+		const { date } = req.params;
+		const dateRegex = /^[0-9]{1,2}\-[0-9]{1,2}\-[0-9]{4}$/;
+		if (!dateRegex.test(date)) return res.status(400).json({msg: "you are using invalid date"});
+
+		const people = await database.getPeopleInfoByDate({
+			date: date
+		});
+		if (people === null) return res.status(204).end();
+		const peopleList = people.people;
+		const findUnVaccinatePeopleList = helper.findNextPersonQueue(peopleList);
+		
+		if (findUnVaccinatePeopleList) return res.json(findUnVaccinatePeopleList);         
+		return res.json({reservation_id : "-"});
+	});
+
+
 	/**
 	 	GET /people/by_reservationID/{reservationID}
 		 @summary get person by reservationID
 		 @param {string} reservationID.path - reservationID to get that person information
-		 @return {Person} 200 - Success response - application/json
+		 @return {Personres} 200 - Success response - application/json
 		 @return {object} 204 - Can't find that person from the specific reservationID
 		 @return {object} 400 - Err - application/json
 		 @return {object} 406 - No reservationId included in request - application/json
@@ -217,9 +291,10 @@ function peopleRoutes(database) {
 	});
 
 	/**
-		PATCH /people/cancel/:date/{reservationID}
+		PATCH /people/cancel/{date}/{reservationID}
 		@summary cancel people in peopleList in people schema by date and reservationID.
 		@param {string} reservationID.path - reservationID to get that person
+		@param {string} date.path - date to get that person
 		@return {object} 200 - Removed the reservationID on that date successful
 		@return {object} 304 - Remove the reservationID on that date unsuccessful
 		@return {object} 406 - No date or reservationID params included in request.
@@ -269,9 +344,10 @@ function peopleRoutes(database) {
 	});
 
 	/**
-		PATCH /people/vaccinated/:date/{reservationID}
+		PATCH /people/vaccinated/{date}/{reservationID}
 		@summary vaccinate people in peopleList in people schema by date and reservationID.
 		@param {string} reservationID.path - reservationID to get that person
+		@param {string} date.path - date to get that person
 		@return {object} 200 - Vaccination the reservationID on that date successful
 		@return {object} 304 - Vaccination the reservationID on that date unsuccessful
 		@return {object} 400 - Err
@@ -296,6 +372,14 @@ function peopleRoutes(database) {
 			.status(406)
 			.json({ msg: "no date or reservationID params included" });
 		}
+
+		const URL = "https://flamxby.herokuapp.com/reservation/report-taken/"+reservationID;
+		try {
+			const sentToGov = await axios.put(URL);
+		} catch (e) {
+			console.log("Can't find that reservationId from gov");
+		}
+					
 		const peopleData = await database.getPeopleInfoByDate({ date: date });
 
 		try {
@@ -350,10 +434,9 @@ function peopleRoutes(database) {
 		// get values from frontend
 		const data = req.body;
 		const { date } = req.params;
-		if (!date) {
-			return res.status(406).json({ msg: "no date param included" });
-		}
-			
+		const dateRegex = /^[0-9]{1,2}\-[0-9]{1,2}\-[0-9]{4}$/;
+		if (!dateRegex.test(date)) return res.status(400).json({msg: "you are using invalid date"});
+
 		const peopleData = await database.getPeopleInfoByDate({date: date});
 		// 1. find if the date already exists in db of that date
 			try {

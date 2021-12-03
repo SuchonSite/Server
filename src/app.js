@@ -9,7 +9,8 @@ function makeApp(database, fetcher){
   const express = require("express"),
   cors = require("cors"),
   bodyParser = require("body-parser"),
-  peopleRoutes = require("./routes/people.route")
+  schedule = require("./cron-job"),
+  peopleRoutes = require("./routes/people.route"),
   getGov = require("./routes/getDataFromGov.route")
 
   const uri = process.env.DATABASE_URI

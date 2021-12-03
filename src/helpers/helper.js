@@ -33,6 +33,7 @@ function convertGovJson(thisJson) {
   let newJson = {
     reservation_id: thisJson["reservation_id"],
     register_timestamp: thisJson["register_timestamp"],
+    vaccinated: thisJson["vaccinated"],
     ...thisJson["owner"],
   };
   return newJson;
@@ -61,8 +62,10 @@ function toSlashDate(date) {
 function modifyPeopleList(jsonPeopleList) {
   let newPeopleList = [];
   for (const person of jsonPeopleList) {
+    // console.log(person)
     let thisPerson = convertGovJson(person);
     newPeopleList.push(thisPerson);
+    // console.log(thisPerson)
   }
   return newPeopleList;
 }
@@ -119,7 +122,7 @@ function assignPeopleListInTimeslots(peopleList) {
   const peoplePerTimeslot = process.env.PEOPLE_PER_TIMESLOT;
 
   //start vaccination when government open
-  let vac_time = process.env.GOVERNMENT_OPEN;
+  let vac_time = parseInt(process.env.GOVERNMENT_OPEN);
 
   let assignedTimePeopleList = [];
 
@@ -129,10 +132,10 @@ function assignPeopleListInTimeslots(peopleList) {
       //re availible vacciantgion slot of current timeslot
       avaliableCurrentSlot = peoplePerTimeslot;
 
-      if (vac_time == process.env.GOVERNMENT_CLOSE) {
+      if (vac_time == parseInt(process.env.GOVERNMENT_CLOSE)) {
         throw new Error("Not enough timeslot for all vaccination");
       } else {
-        vac_time += process.env.VACCINATION_TIME;
+        vac_time += parseInt(process.env.VACCINATION_TIME);
       }
     }
     newPerson = { ...person, vac_time: vac_time };
@@ -142,6 +145,28 @@ function assignPeopleListInTimeslots(peopleList) {
   }
 
   return assignedTimePeopleList;
+}
+
+function findUnVaccinatePeopleList(peopleList) {
+  let unVaccinate = [];
+  //set priority people in people list
+  for (let person of peopleList) {
+    if (person.vaccinated == false) {
+      unVaccinate.push(person);
+    }
+  }
+  return unVaccinate;
+}
+
+function findNextPersonQueue(peopleList) {
+  const d = new Date;
+  let hours = d.getHours();
+  for (let person of peopleList) {
+    if (person.vaccinated == false) {
+      if (person.vac_time >= hours && (process.env.GOVERNMENT_OPEN <= hours && hours <= process.env.GOVERNMENT_CLOSE)) return person;
+    }
+  }
+  return null;
 }
 
 function countPeople(peopleData) {
@@ -311,4 +336,6 @@ module.exports = {
   addPeopleToList,
   findAvailableTimeSlot,
   findPeopleByReservationID,
+  findUnVaccinatePeopleList,
+  findNextPersonQueue
 };
