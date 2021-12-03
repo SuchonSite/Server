@@ -151,7 +151,8 @@ function peopleRoutes(database) {
 		const peopleList = people.people;
 		const findUnVaccinatePeopleList = helper.findUnVaccinatePeopleList(peopleList);
 
-		return res.json(findUnVaccinatePeopleList);
+		const result = {date: date, people:findUnVaccinatePeopleList}
+		return res.json(result);
 	});
 
 	/**
@@ -357,7 +358,8 @@ function peopleRoutes(database) {
 
 		const URL = "https://flamxby.herokuapp.com/reservation/report-taken/"+reservationID;
 
-		axios.put(URL).then().catch((err)=> res.status(400).json({msg: err}))
+		const sentToGov = await axios.put(URL);
+
 					
 		const peopleData = await database.getPeopleInfoByDate({ date: date });
 
